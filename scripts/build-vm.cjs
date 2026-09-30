@@ -30,7 +30,7 @@ function buildVM(output = path.join(root, 'site/_site')) {
     'XTERM-LICENSE.txt': '@xterm/xterm/LICENSE'
   };
   for (const [name, source] of Object.entries(vendor)) payload.set(name, fs.readFileSync(path.join(root, 'node_modules', source)));
-  for (const name of ['vm-terminal.js', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs']) {
+  for (const name of ['initial-view.js', 'vm-terminal.js', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs']) {
     payload.set(name, fs.readFileSync(path.join(root, 'site/js', name)));
   }
   payload.set('terminal.css', fs.readFileSync(path.join(root, 'site/css/terminal.css')));

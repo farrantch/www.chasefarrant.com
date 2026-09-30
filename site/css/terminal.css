@@ -41,6 +41,9 @@ button:focus-visible, a:focus-visible {
 }
 ::selection { background: #31533b; color: var(--bright); }
 [hidden] { display: none !important; }
+/* The head script selects the first view before the terminal modules load. */
+:root[data-initial-view="terminal"] #portfolio { display: none; }
+:root[data-initial-view="terminal"] #terminal-view { display: block !important; }
 .muted { color: var(--muted); }
 .sr-only {
   position: absolute;

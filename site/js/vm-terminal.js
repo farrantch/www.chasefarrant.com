@@ -38,6 +38,7 @@ function setView(next) {
   view = next;
   terminalView.hidden = next !== 'terminal';
   portfolio.hidden = next !== 'browse';
+  delete document.documentElement.dataset.initialView;
   $('[data-view="terminal"]').setAttribute('aria-pressed', String(next === 'terminal'));
   if (next === 'browse') $('[data-view="browse"]').setAttribute('aria-current', 'true');
   else $('[data-view="browse"]').removeAttribute('aria-current');
