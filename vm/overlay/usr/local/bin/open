@@ -1,0 +1,17 @@
+#!/bin/sh
+if [ "$#" -ne 1 ]; then echo 'Usage: open file.pdf | file.url | https://... | mailto:...'; exit 1; fi
+target=$1
+if [ -f "$target" ]; then
+  case "$(readlink -f -- "$target")" in
+    /home/guest/documents/ChaseFarrant-Resume.pdf)
+      target=$(head -n 1 /usr/local/share/portfolio/resume.url) ;;
+    *) target=$(head -n 1 -- "$target" | tr -d '\r') ;;
+  esac
+fi
+case "$target" in
+  https://*|http://*|mailto:*|/*) ;;
+  *) echo 'open: use the résumé PDF, a .url file, web address, or site path.'; exit 1 ;;
+esac
+# OSC messages are handled as data by the browser; navigation needs a click.
+printf '\033]777;open=%s\007' "$(printf '%s' "$target" | base64 | tr -d '\n')"
+printf 'Open in browser: \033]8;;%s\033\\%s\033]8;;\033\\\n' "$target" "$target"

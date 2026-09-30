@@ -1,0 +1,31 @@
+Getting around
+==============
+
+ls                           List files and directories
+cd projects                  Enter a directory
+cd ..                        Go up one level
+cd ~                         Return home
+cd ~/career/2022_veritone     Explore one employer
+cat role.txt                 Read the role summary
+less work.txt                Read the detailed work; q exits
+cat tools.txt                See the technical stack
+less ~/projects/readme.txt   Read a longer page; q exits
+
+Use ls to explore a section, then cat or less to read its text files.
+Use help from anywhere for these commands.
+
+More
+----
+open file.url                Print a link you can click to open
+open ~/documents/ChaseFarrant-Resume.pdf
+                             Preview or download the résumé
+browse                       Switch to the clickable portfolio
+welcome                      Show the welcome message again
+commands                     Tools grouped by task
+help keys                    Keyboard and clipboard shortcuts
+help session                 Files, networking, and restarting
+help games                   Games and controls
+
+Click a web URL in the terminal to open it in a new browser tab.
+
+For the résumé PDF, the top bar also offers Download PDF.

@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ "$#" -eq 1 ] && [ "$1" = --help ]; then
+  printf 'Usage: reboot\nRestart the browser VM as guest. All session files are discarded.\n'
+  exit 0
+fi
+if [ "$#" -ne 0 ]; then
+  printf 'Usage: reboot (or reboot --help)\n' >&2
+  exit 1
+fi
+printf 'Restarting the temporary VM; session files will be cleared.\n'
+# Use the controlling terminal so redirecting stdout cannot swallow the request.
+printf '\033]777;reboot\007' > /dev/tty

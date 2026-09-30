@@ -34,7 +34,7 @@ The basement was completely unfinished, with only concrete walls and floors. In 
 ## Design
 Here is the final design we submitted to the city for a permit. The main difference between this and the final build is that we decided to forgo putting in the bathroom to save on costs, though we did run electrical and plumbing for it. We also reduced the number of overhead lights.
 
-![alt-text](./images/blueprint.jpg)
+![Basement floor plan](/projects/finishing-our-basement/images/blueprint.jpg)
 
 ## In-Progress
 

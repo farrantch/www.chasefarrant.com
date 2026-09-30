@@ -1,0 +1,27 @@
+#!/bin/sh
+case "$#:$1" in
+  '1:--all') busybox --list; printf '\nAdditional programs: nano curl lua joe ed links\nPortfolio helpers: help welcome open browse reboot commands games\nGames: tetris 2048 and /opt/nbsdgames/bin/* (games opens its menu)\n'; exit 0 ;;
+  '0:'|'1:--help') ;;
+  *) printf 'Usage: commands [--all]\n' >&2; exit 1 ;;
+esac
+cat <<'TOOLS'
+Tools by task
+=============
+
+Files        ls cd pwd tree find cp mv rm mkdir ln chmod
+Reading      cat less head tail
+Searching    grep sort uniq wc cut sed awk
+Editing      nano vi joe ed
+Archives     tar gzip gunzip unzip
+Processes    ps top kill sleep
+System       uname hostname id date uptime free df du
+Programming  sh lua
+Games        games nbsdgames tetris 2048 mines sudoku battleship snakeduel
+Network      curl ping wget links (internet access is disabled)
+
+Portfolio    help welcome open browse reboot
+
+Use COMMAND --help for options. cd is built into the shell.
+games opens the New BSD Games menu; help games lists controls and sources.
+commands --all lists every BusyBox applet.
+TOOLS

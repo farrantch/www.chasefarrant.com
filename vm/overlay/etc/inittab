@@ -1,0 +1,3 @@
+::sysinit:/etc/init.d/portfolio
+ttyS0::respawn:/sbin/getty -n -l /usr/local/bin/guest-login -L ttyS0 115200 xterm-256color
+::ctrlaltdel:/sbin/reboot -f

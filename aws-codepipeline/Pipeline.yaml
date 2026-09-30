@@ -35,13 +35,13 @@ Resources:
           - Name: SERVICE_NAME
             Type: PLAINTEXT
             Value: !Ref "ServiceName"
-        PrivilegedMode: true
+        PrivilegedMode: false
         Type: LINUX_CONTAINER
       ServiceRole: !GetAtt "IamRoleBuild.Arn"
       Source:
         Type: CODEPIPELINE
         BuildSpec: aws-codebuild/build.yaml
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 30
   CodeBuildProjectDeployPost:
     Type: AWS::CodeBuild::Project
     Properties:
@@ -67,13 +67,13 @@ Resources:
           - Name: SERVICE_NAME
             Type: PLAINTEXT
             Value: !Ref "ServiceName"
-        PrivilegedMode: true
+        PrivilegedMode: false
         Type: LINUX_CONTAINER
       ServiceRole: !GetAtt "IamRoleDeployPost.Arn"
       Source:
         Type: CODEPIPELINE
         BuildSpec: aws-codebuild/deploy-post.yaml
-      TimeoutInMinutes: 5
+      TimeoutInMinutes: 30
   CodePipelinePipelineMain: 
     Type: AWS::CodePipeline::Pipeline
     DependsOn:
@@ -330,8 +330,8 @@ Resources:
           - Sid: S3
             Action:
               - s3:ListBucket*
-              - s3:DeleteObject
               - s3:PutObject
+              - s3:GetObject
             Resource:
               - !Sub "arn:${AWS::Partition}:s3:::${Prefix}-${Environment}-${ServiceName}-*"
               - !Sub "arn:${AWS::Partition}:s3:::${Prefix}-${Environment}-${ServiceName}-*/*"
@@ -340,13 +340,15 @@ Resources:
             Action:
               - s3:Get*
               - s3:List*
-              - s3:Describe*
+              - s3:PutObject
             Resource:
+              - !Sub "arn:${AWS::Partition}:s3:::${S3BucketPipeline}"
               - !Sub "arn:${AWS::Partition}:s3:::${S3BucketPipeline}/*"
             Effect: Allow
           - Sid: CloudFront
             Action:
               - cloudfront:CreateInvalidation
+              - cloudfront:GetInvalidation
             Resource:
               - !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/*"
             Effect: Allow

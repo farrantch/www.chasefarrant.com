@@ -1,0 +1,24 @@
+This session
+============
+
+Files
+-----
+Your home directory and /tmp are writable. Changes last for this visit.
+Refreshing, closing the page, or running reboot discards them.
+Switching to Browse pauses the session; Terminal resumes it.
+
+Networking
+----------
+Internet access is currently disabled. Network tools such as curl and
+ping cannot reach other hosts. Use open to visit links in your browser.
+
+Tools
+-----
+The shell is ash. Most utilities come from BusyBox; flags can differ
+from their GNU equivalents. Use COMMAND --help for a tool's options.
+Nano, curl, Lua, joe, ed, and links are also installed.
+There is no package manager. commands lists tools by task.
+
+Restarting
+----------
+Type reboot or refresh the page to start a fresh session as guest.

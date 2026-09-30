@@ -1,0 +1,189 @@
+[
+  {
+    "index": "001",
+    "title": "OpenPowerWheels",
+    "description": "A modular controller for electric ride-on toys, designed to adapt as kids grow.",
+    "year": "2024",
+    "status": "Prototype",
+    "category": "electronics",
+    "categoryLabel": "Electronics",
+    "materials": [
+      "ESP32",
+      "C++",
+      "motors",
+      "controls"
+    ],
+    "url": "/projects/openpowerwheels/",
+    "visual": "circuit",
+    "slug": "openpowerwheels",
+    "highlights": [
+      "Separate motor control, pedals, and remote inputs so each can change independently.",
+      "Explore support for different motors and pedal types without replacing the whole controller.",
+      "Built around an ESP32 and C++."
+    ]
+  },
+  {
+    "index": "002",
+    "title": "chasefarrant.com",
+    "description": "A portfolio inside a browser-based Linux terminal, with a conventional Browse view.",
+    "year": "2024",
+    "status": "Maintained",
+    "category": "infrastructure",
+    "categoryLabel": "Infrastructure",
+    "materials": [
+      "Linux",
+      "v86",
+      "Eleventy",
+      "AWS"
+    ],
+    "url": "/projects/chasefarrant.com/",
+    "visual": "pipeline",
+    "slug": "website",
+    "highlights": [
+      "Linux runs locally through v86, with xterm.js handling the terminal.",
+      "Project records supply both the guest files and the Browse view.",
+      "Eleventy builds the site; an AWS pipeline publishes static files to S3 and CloudFront."
+    ]
+  },
+  {
+    "index": "003",
+    "title": "Finishing an unfinished basement",
+    "description": "Turning an unfinished basement into living space, from planning and framing to wiring and drywall.",
+    "year": "2021",
+    "status": "Complete",
+    "category": "home",
+    "categoryLabel": "Home",
+    "materials": [
+      "lumber",
+      "Rockwool",
+      "CAT6a",
+      "drywall"
+    ],
+    "url": "/projects/finishing-our-basement/",
+    "visual": "photo",
+    "image": "/projects/finishing-our-basement/images/after_5.jpg",
+    "imageAlt": "The completed basement interior",
+    "slug": "basement",
+    "highlights": [
+      "Planned around the existing sump pump, radon system, and HVAC.",
+      "Ran coax and CAT6a to every wall and insulated with Rockwool.",
+      "Hung drywall with my brother; a contractor handled mudding and taping."
+    ]
+  },
+  {
+    "index": "004",
+    "title": "Propertunity",
+    "description": "Property listing history, maps, and investment comparisons in one application.",
+    "year": "2026",
+    "status": "In progress",
+    "category": "software",
+    "categoryLabel": "Software",
+    "materials": [
+      "Python",
+      "React",
+      "PostGIS",
+      "MapLibre"
+    ],
+    "url": "https://github.com/farrantch/propertunity",
+    "external": true,
+    "visual": "map",
+    "slug": "propertunity",
+    "highlights": [
+      "Keep listing history so changes can be compared over time.",
+      "Combine property locations with investment calculations.",
+      "Built with Python, React, PostGIS, and MapLibre."
+    ]
+  },
+  {
+    "index": "005",
+    "title": "Disk Analyzer",
+    "description": "An offline workflow for inspecting disk images and producing searchable recovery reports.",
+    "year": "2026",
+    "status": "Working",
+    "category": "software",
+    "categoryLabel": "Software",
+    "materials": [
+      "Python",
+      "Sleuth Kit",
+      "PhotoRec",
+      "HTML"
+    ],
+    "visual": "disk",
+    "slug": "disk-analyzer",
+    "highlights": [
+      "Bring forensic tools into a repeatable analysis workflow.",
+      "Use Sleuth Kit and PhotoRec to examine disk images and recover files.",
+      "Produce HTML reports while keeping the raw media local."
+    ]
+  },
+  {
+    "index": "006",
+    "title": "Homelab",
+    "description": "Home networking, compute, and storage with documented operations and recovery.",
+    "year": "2026",
+    "status": "Building",
+    "category": "infrastructure",
+    "categoryLabel": "Infrastructure",
+    "materials": [
+      "OPNsense",
+      "Proxmox",
+      "TrueNAS",
+      "Docker"
+    ],
+    "url": "https://github.com/farrantch/homelab",
+    "external": true,
+    "visual": "network",
+    "slug": "homelab",
+    "highlights": [
+      "Build around OPNsense, Proxmox, TrueNAS, and Docker.",
+      "Document how networking, compute, and storage fit together.",
+      "Keep recovery procedures alongside the operating notes."
+    ]
+  },
+  {
+    "index": "007",
+    "title": "Favicon Generator",
+    "description": "A browser tool for editing an image and exporting a favicon package.",
+    "year": "2026",
+    "status": "Complete",
+    "category": "software",
+    "categoryLabel": "Software",
+    "materials": [
+      "JavaScript",
+      "Canvas",
+      "SVG",
+      "ZIP"
+    ],
+    "visual": "icons",
+    "slug": "favicon-generator",
+    "highlights": [
+      "Edit and preview the source image locally in the browser.",
+      "Use Canvas and SVG for image processing and previews.",
+      "Package the generated formats in a ZIP download."
+    ]
+  },
+  {
+    "index": "008",
+    "title": "Catch Amy recordings",
+    "description": "Recordings from Catch Amy, the band I played guitar in during college.",
+    "year": "2012",
+    "status": "Archive",
+    "category": "music",
+    "categoryLabel": "Music",
+    "materials": [
+      "guitars",
+      "drums",
+      "recording",
+      "songs"
+    ],
+    "url": "https://open.spotify.com/artist/1XvxAZS5waAnVv4OEnZDVA",
+    "external": true,
+    "visual": "audio",
+    "slug": "catch-amy",
+    "highlights": [
+      "Songs written and recorded around 2012.",
+      "The recordings are closer to a demo tape than a finished studio album.",
+      "Listen through the Spotify artist page."
+    ]
+  }
+]

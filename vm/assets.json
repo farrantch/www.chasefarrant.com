@@ -1,0 +1,418 @@
+[
+  {
+    "name": "buildroot-bzimage68.bin",
+    "url": "https://i.copy.sh/buildroot-bzimage68.bin",
+    "sha256": "507a759c70ab7a490a233be454d0b5b88bc667956a410b531cb4edc091e2eb1c"
+  },
+  {
+    "name": "seabios.bin",
+    "url": "https://raw.githubusercontent.com/copy/v86/5f9a90f/bios/seabios.bin",
+    "sha256": "73e3f359102e3a9982c35fce98eb7cd08f18303ac7f1ba6ebfbe6cdc1c244d98"
+  },
+  {
+    "name": "vgabios.bin",
+    "url": "https://raw.githubusercontent.com/copy/v86/5f9a90f/bios/vgabios.bin",
+    "sha256": "a4bc0d80cc3ca028c73dafa8fee396b8d054ce87ebd8abfbd31b06b437607880"
+  },
+  {
+    "name": "nano-i386",
+    "source": "vm/programs/nano/Dockerfile",
+    "sha256": "88a9189d71aeb4632fe6d0565d806113af34b38d7f5779eb0c9d76694bd22e89",
+    "guestPath": "usr/local/bin/nano",
+    "mode": 33261
+  },
+  {
+    "name": "nano-9.2.tar.xz",
+    "url": "https://www.nano-editor.org/dist/v9/nano-9.2.tar.xz",
+    "sha256": "05ecb99247b782e8a5b3a25ed4101dd034b0236902f7449bc9795b717642f7e9"
+  },
+  {
+    "name": "xterm-256color",
+    "source": "vm/programs/nano/Dockerfile (ncurses-terminfo-base)",
+    "sha256": "1eb6ddea79d7512693e3be76ee66939984d134b5ad179b9418e73a651df9e5ef",
+    "guestPath": "usr/share/terminfo/x/xterm-256color"
+  },
+  {
+    "name": "curl-i386",
+    "source": "vm/programs/curl/Dockerfile",
+    "guestPath": "usr/bin/curl",
+    "mode": 33261,
+    "sha256": "4e159ae1921e575eadf0ed61c0ed397355c90446360b6e348e66a302b6d98765"
+  },
+  {
+    "name": "ca-certificates.crt",
+    "source": "Alpine ca-certificates 20260909-r0 (vm/programs/curl/Dockerfile)",
+    "guestPath": "etc/ssl/certs/ca-certificates.crt",
+    "sha256": "028fca5150ee1915c4474489985d55c54fceaa680c754cc8d1301734f01b2232"
+  },
+  {
+    "name": "curl-8.22.0.tar.xz",
+    "url": "https://curl.se/download/curl-8.22.0.tar.xz",
+    "sha256": "f7ef3ae8a22e521f289803fe93543eb64c329b58aa73a9e224dfd915a2a5f4f7"
+  },
+  {
+    "name": "vitetris-0.59.1.tar.gz",
+    "url": "https://codeload.github.com/vicgeralds/vitetris/tar.gz/9bbea4f5ab35d6fb8fe70c14daba19e7f35ab44e",
+    "sha256": "e9035ac874d44582843a7f48a3bbf9c0f89b618a015f018c18672e4af758e6b6"
+  },
+  {
+    "name": "nbsdgames-6.0.2.tar.gz",
+    "url": "https://codeload.github.com/abakh/nbsdgames/tar.gz/9a1bd320fe360de04a4b2e8b9d50dbe3a52d7acb",
+    "sha256": "95f9f855557c8d8359d56c175213d3c2f641cfb5744d9bbcc3226d7129087916"
+  },
+  {
+    "name": "2048-afc88986.tar.gz",
+    "url": "https://codeload.github.com/mevdschee/2048.c/tar.gz/afc8898691f54d43309497f4c32682fe90bb5f57",
+    "sha256": "7fcd88c09c38cbecdf6cbd47ef88787d0a42b2f7e36ad97a6bfbf3ae114db38c"
+  },
+  {
+    "name": "games/opt/2048/bin/2048",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/2048/bin/2048",
+    "mode": 33261,
+    "sha256": "9ffd34b406efc10b35ae7efe045cbeec6d82b8a23f1b222315a5f2f2537130ee"
+  },
+  {
+    "name": "games/opt/2048/share/doc/LICENSE",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/2048/share/doc/LICENSE",
+    "mode": 33188,
+    "sha256": "593783abd95546a2817d104b2656dd985a979a9e90da895729f211fc844b6402"
+  },
+  {
+    "name": "games/opt/2048/share/doc/README.md",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/2048/share/doc/README.md",
+    "mode": 33188,
+    "sha256": "bd8cc4d981eefdec443aa54cc4853aca470ca5b51dcd4c647c831dd887d70ff0"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/battleship",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/battleship",
+    "mode": 33261,
+    "sha256": "fb2c78c934aa2516cc9c884b9a6b8ed31321c039bb5644081bd4751a7adc6540"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/checkers",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/checkers",
+    "mode": 33261,
+    "sha256": "3a9859b95b4181578e0e9e9b456bb0ed5837a3fb86944ff125570c7b9cd8d490"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/darrt",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/darrt",
+    "mode": 33261,
+    "sha256": "aa612a3efc16807a05b0ffd8f4b98a4fceca25fd60412bddc0c1f4a7c7289894"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/fifteen",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/fifteen",
+    "mode": 33261,
+    "sha256": "7af64c4477b028d4bc2a1c7e9ba569099240ae1bddef9a52ad18df6a4c09b49a"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/fisher",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/fisher",
+    "mode": 33261,
+    "sha256": "31917d001af58d365fb3d76b00deb75c10659feb90566a9f3e28d033fa11efe4"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/jewels",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/jewels",
+    "mode": 33261,
+    "sha256": "3a703438dce6d343ff66a59ad420a457c70ff547e7f04aedaed85f56669d4774"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/memoblocks",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/memoblocks",
+    "mode": 33261,
+    "sha256": "841dc2cd791beede9823d35da67c4ebc8442b2b8d0a53fe62cb321573b3cf1ce"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/miketron",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/miketron",
+    "mode": 33261,
+    "sha256": "403c1b307ee1769b539bd5f50bca93bb7474c2eac5da9407ee5036e2b9666a66"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/mines",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/mines",
+    "mode": 33261,
+    "sha256": "3f822bb54c9e75a5bbee210e19b55699cbd5e6c4d94b1406fded25cfac52adbe"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/muncher",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/muncher",
+    "mode": 33261,
+    "sha256": "1cdbe3900ab2526bba3243061c9580051bcaf4fdc7804efaa613ea251e68d550"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/nbsdgames",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/nbsdgames",
+    "mode": 33261,
+    "sha256": "cd27a1f69f16d580004af8b6afade084d05aff861d927870596acb2d67bd2ee8"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/pipes",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/pipes",
+    "mode": 33261,
+    "sha256": "4cd309a5b41b60cf099f2a1e1695dfcbd012eec4be154096f67fe8e74d8b7936"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/rabbithole",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/rabbithole",
+    "mode": 33261,
+    "sha256": "419864024dc29a092a5b1d3227de1720ba78deb9670e7f9dc162b0c206468fcf"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/redsquare",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/redsquare",
+    "mode": 33261,
+    "sha256": "cd65b0526673c9a999ca6d3ff8dc26d03a4461b39d3cb865f1a5ff4a97352eae"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/revenge",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/revenge",
+    "mode": 33261,
+    "sha256": "697eeee55644ce533e6e49ba685b0cea11564286809eda620d69d7a1cfdaeab2"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/reversi",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/reversi",
+    "mode": 33261,
+    "sha256": "7db5c4ee03d038951781e8a8e1d13f34a0aa6ec076eed1ab795d126098bf6789"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/scissor",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/scissor",
+    "mode": 33261,
+    "sha256": "0e75fb2c284010dc0a9fe1b00dd6e9466971667ffbeba8632ed5ff2f65619160"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/sjump",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/sjump",
+    "mode": 33261,
+    "sha256": "005d33c07f471d4f90f7ee8642cf686ed41e0cba7d963a148504e65ffa9143f2"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/snakeduel",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/snakeduel",
+    "mode": 33261,
+    "sha256": "29d641db5f336261de9e6bea2bde3d8f7c8ac91a34d0ff11b7a16fd1057a56bf"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/sos",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/sos",
+    "mode": 33261,
+    "sha256": "05acf35490054bdf73b43c0aefd3c2b5eb511025687ae49d7ff683008bc13847"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/sudoku",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/sudoku",
+    "mode": 33261,
+    "sha256": "78b241e79bd90728206741ae80c2921f71f12538dd0ee077831d5a8c24ad3a44"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/trsr",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/trsr",
+    "mode": 33261,
+    "sha256": "d3080149da551fd564dcb1b1283859e61439eddcb721b556f8f8e05477a5a730"
+  },
+  {
+    "name": "games/opt/nbsdgames/bin/tugow",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/bin/tugow",
+    "mode": 33261,
+    "sha256": "68d5a181e47d5fbe5658583a8a7042fa415979bfff08eb0c564e2afb3e522702"
+  },
+  {
+    "name": "games/opt/nbsdgames/lib/ld-musl-i386.so.1",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/lib/ld-musl-i386.so.1",
+    "mode": 33261,
+    "sha256": "005cc457d3a11318cf3cc52a6c21aa25118ff3935f25d8c91802c81419ffb41b"
+  },
+  {
+    "name": "games/opt/nbsdgames/lib/libncursesw.so.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/lib/libncursesw.so.6",
+    "mode": 33261,
+    "sha256": "c26bd46e06a03b33fb9daec3253436ecf42dea0d196ad72cf594e6766412454d"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/doc/LICENSE",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/doc/LICENSE",
+    "mode": 33188,
+    "sha256": "538fd762477155197a4ccb30c5ac328b67107dfaf99ba61edcdf7b28a807b530"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/doc/README.md",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/doc/README.md",
+    "mode": 33188,
+    "sha256": "ba01941e0b5cee3334eeb1c7802c53f810256b9849b6fc654a9d39e6e6d3e0dd"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/battleship.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/battleship.6",
+    "mode": 33188,
+    "sha256": "ebcd9bb476bedb61569a1503c3b75e8a80d09ff3720bf5699bb9771678eb6146"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/checkers.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/checkers.6",
+    "mode": 33188,
+    "sha256": "378f09d83e7c940bc577bfd66982378a7c46696822452ebf31789eb667a8a55e"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/darrt.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/darrt.6",
+    "mode": 33188,
+    "sha256": "515e38e51dc2d5661549caa4fcee6409b718081105b123fddfb71e7b2beb0d11"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/fifteen.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/fifteen.6",
+    "mode": 33188,
+    "sha256": "da0e12445d9a2dbbecedfa16a3b1a0ffa9d09bd2f90c98214b0fc52da87669c2"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/fisher.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/fisher.6",
+    "mode": 33188,
+    "sha256": "00f2d5f348ef2896dadfbe4ce0d86656c91ced4a5e7f988b7317f9e9c9c5f4f5"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/jewels.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/jewels.6",
+    "mode": 33188,
+    "sha256": "440305e269962df2fd14cd2bc60e0b31628f2a3ac47d15c398355fb0b52ef862"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/memoblocks.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/memoblocks.6",
+    "mode": 33188,
+    "sha256": "518a85aa19c8fdaf54f50a38d2335ec0f7c6c264fb0493344e777f834214b6ba"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/miketron.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/miketron.6",
+    "mode": 33188,
+    "sha256": "547be7235d6cc20e08dc724c8848da888298f0f150ba156a94c32680cedb0499"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/mines.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/mines.6",
+    "mode": 33188,
+    "sha256": "d694d370ce2964b216e9dd73d4df513f1f3ea33c9bbd3a919d3f7db08827b30b"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/muncher.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/muncher.6",
+    "mode": 33188,
+    "sha256": "bfefb6259e38025ed75ca4a906c82dcbc4deb72422a91a3bf5a9d1f6bf841047"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/pipes.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/pipes.6",
+    "mode": 33188,
+    "sha256": "57f31e2a92b8deea85ce85f266e007df515cf56276a0066f79a8662d74875914"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/rabbithole.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/rabbithole.6",
+    "mode": 33188,
+    "sha256": "6279e014e7e7ccb5b5430348f77f445384f7df7f77c5721e1982fdd5597104f7"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/redsquare.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/redsquare.6",
+    "mode": 33188,
+    "sha256": "bc096d93f0fc8781122fde7bffc71fe07094ab7f57a341c108c4df1085e78741"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/reversi.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/reversi.6",
+    "mode": 33188,
+    "sha256": "5f5e63fbf8438ed7819bb913a40d2c9c79f9fc3957a1df41b39b5c01c7964a5c"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/snakeduel.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/snakeduel.6",
+    "mode": 33188,
+    "sha256": "5d1357742856508096111481230e42c85aa1f365a797ca32d8373c64857815cc"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/sos.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/sos.6",
+    "mode": 33188,
+    "sha256": "5f077f5a107fa4cd3bb4a0f6e0f02c63ccc0bdc98dbe4b290eb7561fe03789b9"
+  },
+  {
+    "name": "games/opt/nbsdgames/share/man/man6/sudoku.6",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/nbsdgames/share/man/man6/sudoku.6",
+    "mode": 33188,
+    "sha256": "31b5928a7fc59276ef054c79ed85bee5c301d541d2f46f5d78335b4e56a674b5"
+  },
+  {
+    "name": "games/opt/vitetris/bin/tetris",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/vitetris/bin/tetris",
+    "mode": 33261,
+    "sha256": "c8aedb6b2d82e8b47213ad2410cda66af52ebb0faaeebb5aba1b6b5a83149efb"
+  },
+  {
+    "name": "games/opt/vitetris/share/doc/vitetris/licence.txt",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/vitetris/share/doc/vitetris/licence.txt",
+    "mode": 33188,
+    "sha256": "c154653357c51bb69886c118f9239d753eca2038b78bcba53028b723ff4765a7"
+  },
+  {
+    "name": "games/opt/vitetris/share/doc/vitetris/README",
+    "source": "vm/programs/games/Dockerfile",
+    "guestPath": "opt/vitetris/share/doc/vitetris/README",
+    "mode": 33188,
+    "sha256": "a8e6c8cb57300cd8b75fbac26206533960c4ae9552e9b93b8f1d8f8eb2b9f58b"
+  }
+]

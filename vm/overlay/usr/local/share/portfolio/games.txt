@@ -1,0 +1,29 @@
+Games
+=====
+
+games         Open the New BSD Games selection menu
+nbsdgames     The same upstream menu
+mines         Minesweeper
+sudoku        Sudoku
+battleship    Battleship
+snakeduel     Snake duel
+checkers      Checkers
+reversi       Reversi
+tetris        vitetris
+2048          Slide and combine numbered tiles
+
+New BSD Games: press Enter to accept your name, then use arrow keys and
+Enter to choose a game. Press ? or ! in a game for help, and q to leave.
+Tetris: choose 1-Player Game from the menu; its options show the controls.
+2048: arrow keys or WASD to move; q then y to quit.
+Ctrl+C also returns you to the shell.
+
+ls /opt/nbsdgames/bin lists the full collection.
+Programs live under /opt; scores live under /var/opt or in your home.
+Scores and settings last for this session and reset on reboot or refresh.
+
+Upstream projects
+-----------------
+https://github.com/vicgeralds/vitetris
+https://github.com/abakh/nbsdgames
+https://github.com/mevdschee/2048.c

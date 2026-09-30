@@ -1,0 +1,8 @@
+#!/bin/sh
+case "${1:-}" in
+  ''|-h|--help) topic=help ;;
+  keys|session|games) topic=$1 ;;
+  *) printf 'Usage: help [keys|session|games]\n' >&2; exit 1 ;;
+esac
+if [ "$#" -gt 1 ]; then printf 'Usage: help [keys|session|games]\n' >&2; exit 1; fi
+cat "/usr/local/share/portfolio/$topic.txt"

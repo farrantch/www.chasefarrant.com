@@ -1,0 +1,13 @@
+{
+  "paragraphs": [
+    "I'm Chase Farrant. I work in automation, cloud infrastructure, and backend software development. My work includes deployment pipelines, infrastructure as code, and backend APIs.",
+    "I like systems that are straightforward to operate and change. Most of my projects start with something I want to automate, understand, or fix."
+  ],
+  "outsideWork": "Outside work, I spend time on electronics, home renovation, and projects around the farm. I grew up skiing and riding dirt bikes, and later rebuilt the three bikes I rode as a kid. I also played guitar in Catch Amy during college.",
+  "focus": [
+    "Cloud infrastructure on AWS and Azure",
+    "Deployment automation and CI/CD",
+    "Infrastructure as code with Terraform and CloudFormation",
+    "Backend APIs with Python and FastAPI"
+  ]
+}

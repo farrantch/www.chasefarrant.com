@@ -3,15 +3,25 @@ phases:
   install:
     on-failure: ABORT
     runtime-versions:
-      nodejs: 18
+      nodejs: 22
     commands:
       - npm ci
+      - npx playwright install --with-deps chromium firefox webkit
   build:
     on-failure: ABORT
     commands:
-      # Build Website
-      - cd site/
-      - npx eleventy
+      - npm audit --audit-level=moderate
+      - npm test
+      - npm run test:vm
+      - npm run build
+      - npm run test:browser
+      - npm run test:browsers
 artifacts:
   files:
-    - '**/*'
+    - site/_site/**/*
+    - aws-cloudformation/**/*
+    - aws-codebuild/deploy-post.yaml
+    - scripts/deploy.cjs
+    - scripts/release-policy.cjs
+    - scripts/release-manifest.cjs
+    - scripts/check-hosted.cjs

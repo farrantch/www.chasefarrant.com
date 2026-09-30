@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg viewBox="60.354 172.912 200 200" xmlns="http://www.w3.org/2000/svg">
-  <rect x="60.354" y="229.577" width="45.232" height="103.173" style="stroke-width: 0px; stroke: rgb(154, 36, 36); fill: rgb(0, 128, 0);"/>
-  <rect x="60.956" y="227.766" width="132.092" height="39.909" style="stroke: rgb(0, 0, 0); fill: rgb(0, 128, 0); stroke-width: 0px;"/>
-  <rect x="60.354" y="331.033" width="133.2" height="41.592" style="stroke: rgb(0, 0, 0); fill: rgb(0, 128, 0); stroke-width: 0px;"/>
-  <rect x="208.704" y="174.926" width="51.65" height="197.986" style="stroke: rgb(0, 0, 0); fill: rgb(32, 32, 32); stroke-width: 0px;"/>
-  <rect x="60.656" y="172.912" width="199.398" height="41.548" style="stroke: rgb(0, 0, 0); fill: rgb(32, 32, 32); stroke-width: 0px;"/>
-  <rect x="120.987" y="278.811" width="137.865" height="39.713" style="stroke: rgb(0, 0, 0); fill: rgb(32, 32, 32); stroke-width: 0px;"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <title>cf&gt;</title>
+  <rect width="32" height="32" rx="6" fill="#0b0e0c"/>
+  <g fill="none" stroke="#9cdaa9" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 14H7a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h3"/>
+    <path d="M16 22V12a3 3 0 0 1 3-3h1M13 15h7"/>
+    <path d="m24 14 5 4-5 4" stroke="#eff5f0"/>
+  </g>
 </svg>
