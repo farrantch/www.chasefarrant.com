@@ -1,14 +1,20 @@
-name: Build
-on: [push, pull_request]
+name: Build and deploy
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
   BuildEleventy:
-    runs-on: ubuntu-latest
+    name: Build and test
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '22'
           cache: npm
@@ -20,3 +26,72 @@ jobs:
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: npm run test:browser
       - run: npm run test:browsers
+      - name: Verify release manifest
+        run: node scripts/deploy.cjs
+      - name: Save tested release
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: site-${{ github.sha }}
+          path: site/_site/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+  production:
+    name: Publish to production
+    needs: BuildEleventy
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    environment:
+      name: production
+      url: https://www.chasefarrant.com
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: us-east-1
+      AWS_ACCOUNT_ID: '010655802910'
+      SITE_STACK: cf-prod-portfolio
+      ARCHIVE_BUCKET: ${{ vars.RELEASE_ARCHIVE_BUCKET }}
+      STACK_ROLE: ${{ vars.CLOUDFORMATION_ROLE_ARN }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '22'
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site-${{ github.sha }}
+          path: site/_site/
+      - name: Verify tested artifact and revision
+        run: |
+          node scripts/deploy.cjs
+          node -e 'const m = require("./site/_site/release.json"); if (m.revision !== process.env.GITHUB_SHA) throw new Error("Unexpected source revision")'
+      - name: Reject an outdated main build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          latest=$(gh api "repos/$GITHUB_REPOSITORY/commits/main" --jq .sha)
+          if [ "$latest" != "$GITHUB_SHA" ]; then
+            echo "::error::main has moved; publish its newer build instead."
+            exit 1
+          fi
+      - name: Authenticate to AWS
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          allowed-account-ids: ${{ env.AWS_ACCOUNT_ID }}
+          role-session-name: github-${{ github.run_id }}
+      - name: Update website infrastructure
+        run: node scripts/deploy-stack.cjs
+      - name: Publish website and verify public URLs
+        run: node scripts/deploy.cjs --stack "$SITE_STACK" --archive-bucket "$ARCHIVE_BUCKET" --execute
+      - name: Record release
+        run: |
+          node -e 'const fs = require("node:fs"); const m = require("./site/_site/release.json"); fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Published **${m.release}** from ${m.revision}.\n\n[Open website](https://www.chasefarrant.com)\n`)'

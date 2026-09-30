@@ -1,10 +1,10 @@
 # www.chasefarrant.com
 
-[![Build](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml/badge.svg)](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml)
+[![Build and deploy](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml/badge.svg)](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml)
 
-The source for [www.chasefarrant.com](https://www.chasefarrant.com), a deliberately small engineering site built with Eleventy and deployed through an infrastructure-as-code pipeline on AWS.
+The source for [www.chasefarrant.com](https://www.chasefarrant.com), a deliberately small engineering site built with Eleventy and deployed to AWS by GitHub Actions.
 
-The portfolio can be explored through a real Linux VM running in the browser or through ordinary links. Eleventy generates both views from the same content. Build validation, pipeline updates, infrastructure deployment, artifact sync, and CloudFront invalidation are represented as code.
+The portfolio can be explored through a real Linux VM running in the browser or through ordinary links. Eleventy generates both views from the same content. Build validation, infrastructure deployment, artifact uploads, and CloudFront invalidation are represented as code.
 
 ## Architecture
 
@@ -24,25 +24,25 @@ The main CloudFormation stack owns the Route 53 zone and records, ACM certificat
 ## Delivery path
 
 ```text
-GitHub
-  │
-  ▼
-CodePipeline source
-  │
-  ├── Update the pipeline's own CloudFormation stack
-  ├── Build the Eleventy site in CodeBuild
-  ├── Deploy the site infrastructure with CloudFormation
-  ├── Sync generated content to S3
-  └── Invalidate CloudFront
+Push or pull request
+  └── GitHub Actions: audit, unit tests, Linux VM tests, browser tests
+        └── Save the tested site artifact
+              └── main only: Publish to production
+                    ├── Authenticate to AWS with OIDC
+                    ├── Update website CloudFormation stack
+                    ├── Archive and upload the tested site
+                    └── Invalidate CloudFront and verify public URLs
 ```
 
-The repository also runs an independent GitHub Actions build on every push, running the same dependency, unit, VM, and browser checks as the release build.
+The production job uses the protected `production` environment and temporary AWS
+credentials. Deployment and rollback share a concurrency group so they cannot
+write to the website at the same time.
 
 ## Engineering choices
 
 - **Static by default.** Eleventy turns Markdown and Nunjucks into files that can be served cheaply and reliably from S3.
 - **Infrastructure is reviewable.** DNS, TLS, CDN behavior, storage, IAM, and CI/CD live in CloudFormation rather than a collection of console settings.
-- **The pipeline updates itself.** CodePipeline deploys its own template before building and releasing the site, keeping delivery changes versioned with the application.
+- **Test once, publish the artifact.** Production downloads the output from the successful build. It verifies checksums and the source revision before using AWS credentials.
 - **Caching is explicit.** Separate response-header policies allow long-lived caching for static assets while keeping navigational content fresh.
 - **Few third-party requests.** Fonts are served locally, and generated assets use cache-busting URLs.
 
@@ -50,10 +50,9 @@ The repository also runs an independent GitHub Actions build on every push, runn
 
 ```text
 .
-├── .github/workflows/       # Push-time build validation
+├── .github/workflows/       # Validation, production deployment, and rollback
 ├── aws-cloudformation/      # Runtime AWS infrastructure
-├── aws-codebuild/           # Build and post-deploy steps
-├── aws-codepipeline/        # Self-updating delivery pipeline
+├── aws-github-actions/      # AWS OIDC roles and private release archive
 ├── site/                    # Eleventy content, layouts, and assets
 ├── deploy_cf_stack.sh       # Infrastructure bootstrap helper
 └── install.sh               # Local setup helper
@@ -61,7 +60,7 @@ The repository also runs an independent GitHub Actions build on every push, runn
 
 ## Run locally
 
-Requires Node.js 22 or newer and npm. Both CI systems use Node.js 22.
+Requires Node.js 22 or newer and npm. GitHub Actions uses Node.js 22.
 
 ```bash
 npm ci
@@ -112,7 +111,7 @@ The browser test commands start their own local server unless `TERMINAL_URL`
 is provided. The preview serves the same content types and cache policies as
 the deployment uploader.
 
-CodeBuild runs the audit, unit tests, Linux VM tests, full Chromium interaction
+GitHub Actions runs the audit, unit tests, Linux VM tests, full Chromium interaction
 tests, and Firefox/WebKit/slow-connection checks before it produces a deployable
 artifact. See [the release guide](docs/releasing.md) for deployment and rollback.
 

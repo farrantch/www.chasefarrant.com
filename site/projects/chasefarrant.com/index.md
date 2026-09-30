@@ -25,7 +25,7 @@ The terminal starts automatically as guest, showing download and boot progress.
 A single navbar also offers a Browse view for visitors who prefer links.
 The VM has a temporary writable filesystem and runs without a guest network
 connection. The entire site is still served as
-static files through the AWS pipeline below.
+static files on S3 and CloudFront, deployed by GitHub Actions.
 
 [Image customization and security notes](https://github.com/farrantch/www.chasefarrant.com/blob/main/vm/README.md)
 
@@ -118,7 +118,11 @@ The infrastructure is quite simple and deployed from a single CloudFormation tem
                                                          │                        │
                                                          └────────────────────────┘
 ```
- There is also a separate CloudFormation template for CodePipeline that automatically deploys updates.
+GitHub Actions checks dependencies, boots the Linux VM, and tests the site in
+Chromium, Firefox, and WebKit. Once those checks pass on `main`, a production job
+uses temporary AWS credentials to update the infrastructure and publish the tested
+files. Each release is archived privately in S3 so it can be restored from GitHub.
+The AWS roles and archive bucket are defined in a separate CloudFormation template.
 
 &nbsp;
 ## Fonts
