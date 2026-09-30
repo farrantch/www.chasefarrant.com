@@ -1,0 +1,159 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: GitHub Actions access and private release archives for www.chasefarrant.com.
+Parameters:
+  GitHubSubject:
+    Type: String
+    Description: Exact OIDC subject, including immutable repository IDs when enabled.
+    Default: repo:farrantch@2348698/www.chasefarrant.com@592829430:environment:production
+  SiteStack:
+    Type: String
+    Default: cf-prod-portfolio
+  SiteBucket:
+    Type: String
+    Default: cf-prod-portfolio-s3bucketwww-melnq6mtmc0m
+  RedirectBucket:
+    Type: String
+    Default: cf-prod-portfolio-s3bucketroot-1isi9y2clajy9
+  SiteDistribution:
+    Type: String
+    Default: E1Y7RGFG9FOWDZ
+  RedirectDistribution:
+    Type: String
+    Default: E1FVTBGO8QXB46
+  HostedZone:
+    Type: String
+    Default: Z07380002FMRL1E4EM0KE
+Resources:
+  GitHubOidc:
+    Type: AWS::IAM::OIDCProvider
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+  ReleaseArchive:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+  ArchivePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ReleaseArchive
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource: [!GetAtt ReleaseArchive.Arn, !Sub '${ReleaseArchive.Arn}/*']
+            Condition:
+              Bool:
+                aws:SecureTransport: false
+  SiteStackRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ManageExistingWebsite
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: WebsiteBucketConfiguration
+                Effect: Allow
+                Action: [s3:Get*, s3:ListBucket, s3:PutBucket*, s3:PutEncryptionConfiguration, s3:PutLifecycleConfiguration]
+                Resource: [!Sub 'arn:${AWS::Partition}:s3:::${SiteBucket}', !Sub 'arn:${AWS::Partition}:s3:::${RedirectBucket}']
+              - Sid: ExistingDistributions
+                Effect: Allow
+                Action: [cloudfront:GetDistribution, cloudfront:GetDistributionConfig, cloudfront:UpdateDistribution, cloudfront:ListTagsForResource, cloudfront:TagResource, cloudfront:UntagResource]
+                Resource: [!Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${SiteDistribution}', !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${RedirectDistribution}']
+              - Sid: ExistingResponsePolicies
+                Effect: Allow
+                Action: [cloudfront:GetResponseHeadersPolicy, cloudfront:GetResponseHeadersPolicyConfig, cloudfront:UpdateResponseHeadersPolicy]
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:response-headers-policy/5815a813-8c82-4e8e-a50a-ab2a271bfb9c'
+                  - !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:response-headers-policy/6a4b7f1d-27f0-43a0-8593-84d29ddae34e'
+              - Sid: ExistingDnsZone
+                Effect: Allow
+                Action: [route53:GetHostedZone, route53:ListResourceRecordSets, route53:ChangeResourceRecordSets, route53:ListTagsForResource, route53:ChangeTagsForResource]
+                Resource: !Sub 'arn:${AWS::Partition}:route53:::hostedzone/${HostedZone}'
+              - Sid: DnsChangeStatus
+                Effect: Allow
+                Action: route53:GetChange
+                Resource: !Sub 'arn:${AWS::Partition}:route53:::change/*'
+              - Sid: ExistingCertificates
+                Effect: Allow
+                Action: [acm:DescribeCertificate, acm:ListTagsForCertificate, acm:AddTagsToCertificate, acm:RemoveTagsFromCertificate, acm:UpdateCertificateOptions]
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:acm:${AWS::Region}:${AWS::AccountId}:certificate/12fb77b3-0d3b-4cf5-a997-ba810efc74c9'
+                  - !Sub 'arn:${AWS::Partition}:acm:${AWS::Region}:${AWS::AccountId}:certificate/fa655775-b56a-4cc1-8b9f-cd1d2a9bcb35'
+  GitHubDeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GitHubOidc
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                token.actions.githubusercontent.com:sub: !Ref GitHubSubject
+      Policies:
+        - PolicyName: PublishWebsite
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: SiteStack
+                Effect: Allow
+                Action: [cloudformation:CreateChangeSet, cloudformation:DescribeChangeSet, cloudformation:ExecuteChangeSet, cloudformation:DeleteChangeSet, cloudformation:DescribeStacks, cloudformation:DescribeStackEvents, cloudformation:GetTemplateSummary]
+                Resource: !Sub 'arn:${AWS::Partition}:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${SiteStack}/*'
+              - Sid: PassSiteRole
+                Effect: Allow
+                Action: iam:PassRole
+                Resource: !GetAtt SiteStackRole.Arn
+                Condition:
+                  StringEquals:
+                    iam:PassedToService: cloudformation.amazonaws.com
+              - Sid: ListReleaseFiles
+                Effect: Allow
+                Action: [s3:ListBucket, s3:GetBucketLocation]
+                Resource: [!Sub 'arn:${AWS::Partition}:s3:::${SiteBucket}', !GetAtt ReleaseArchive.Arn]
+              - Sid: PublishAndArchive
+                Effect: Allow
+                Action: [s3:GetObject, s3:PutObject, s3:AbortMultipartUpload]
+                Resource: [!Sub 'arn:${AWS::Partition}:s3:::${SiteBucket}/*', !Sub '${ReleaseArchive.Arn}/releases/*']
+              - Sid: RefreshWebsite
+                Effect: Allow
+                Action: [cloudfront:CreateInvalidation, cloudfront:GetInvalidation]
+                Resource: !Sub 'arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${SiteDistribution}'
+Outputs:
+  DeployRoleArn:
+    Value: !GetAtt GitHubDeployRole.Arn
+  CloudFormationRoleArn:
+    Value: !GetAtt SiteStackRole.Arn
+  ReleaseArchiveBucket:
+    Value: !Ref ReleaseArchive

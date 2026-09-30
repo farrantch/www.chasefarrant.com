@@ -3,7 +3,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { listFiles, metadata } = require('./release-policy.cjs');
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-function createManifest(root, revision = process.env.CODEBUILD_RESOLVED_SOURCE_VERSION || process.env.GITHUB_SHA || 'local') {
+function createManifest(root, revision = process.env.GITHUB_SHA || 'local') {
   const files = listFiles(root).filter(key => key !== 'release.json').map(key => {
     const bytes = fs.readFileSync(path.join(root, key));
     return { path: key, bytes: bytes.length, sha256: sha256(bytes), ...metadata(key) };

@@ -7,37 +7,58 @@ const { chromium } = require('playwright');
 const url = process.env.TERMINAL_URL || 'http://127.0.0.1:8080';
 const waitTextInBoot = (page, text) => page.waitForFunction(text => document.querySelector('#boot-log').textContent.includes(text), text);
 const waitReady = page => page.waitForFunction(() => document.querySelector('#vm-status').textContent.includes('connected'), null, { timeout: 95000 });
+async function observeBoot(page) {
+  await page.addInitScript(() => {
+    // Record browser-local state and rendered frames. Screenshots and remote
+    // Playwright calls can consume a whole login pause on a busy CI runner.
+    window.__bootHistory = [];
+    new MutationObserver(() => {
+      const screen = document.querySelector('#boot-screen');
+      if (!screen) return;
+      const state = screen.dataset.state;
+      let current = window.__bootHistory.at(-1);
+      if (current?.state !== state) {
+        current = { state, at: performance.now(), frames: [] };
+        window.__bootHistory.push(current);
+      }
+      if (!['art', 'welcome', 'ready', 'off'].includes(state)) return;
+      const text = document.querySelector('.xterm-rows')?.textContent || '';
+      const matches = state === 'art' ? text.includes('::') && !text.includes('Heyo')
+        : state === 'welcome' ? /Heyo[\s\S]*Start with ls\./.test(text)
+        : state === 'ready' ? text.includes('guest@chasefarrant.com:~$') : true;
+      if (matches && !current.frames.length) current.frames.push({
+        text, cursor: Boolean(document.querySelector('.xterm-cursor')),
+        busy: document.querySelector('#terminal-view').getAttribute('aria-busy'),
+        hidden: screen.hidden, log: document.querySelector('#boot-log').textContent,
+      });
+    }).observe(document, { subtree: true, childList: true, characterData: true, attributes: true });
+  });
+}
 async function waitForLogin(page, checkInput = false) {
-  // The terminal repaints on a later frame after returning from Browse.
-  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'art'
-    && document.querySelector('.xterm-rows')?.textContent.includes('::'), null, { timeout: 95000 });
-  const artShownAt = await page.evaluate(() => performance.now());
-  assert.equal(await page.locator('#boot-screen').isVisible(), false);
-  assert.equal(await page.locator('#terminal-view').getAttribute('aria-busy'), 'true');
-  const art = await page.locator('.xterm-rows').innerText();
-  assert.match(art, /::/);
-  assert.doesNotMatch(art, /Heyo|Start with ls\.|guest@chasefarrant\.com:~\$/);
-  assert.equal(await page.locator('.xterm-cursor').count(), 0);
   if (checkInput) {
+    await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'art', null, { timeout: 95000 });
     await page.locator('.xterm-helper-textarea').focus();
-    await page.keyboard.type('echo EARLY_INPUT_SHOULD_NOT_RUN');
+    await page.keyboard.type('x');
     await page.keyboard.press('Enter');
-    await page.screenshot({ path: '/tmp/chase-vm-art-before-welcome.png' });
   }
-  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'welcome'
-    && /Heyo[\s\S]*Start with ls\./.test(document.querySelector('.xterm-rows')?.textContent));
-  const welcomeShownAt = await page.evaluate(() => performance.now());
-  assert(welcomeShownAt - artShownAt >= 250, 'ASCII art gets a short pause before the welcome paragraph');
-  assert.match(await page.locator('.xterm-rows').innerText(), /Heyo[\s\S]*Start with ls\./);
-  assert.doesNotMatch(await page.locator('.xterm-rows').innerText(), /guest@chasefarrant\.com:~\$/);
-  assert.equal(await page.locator('.xterm-cursor').count(), 0);
-  if (checkInput) await page.screenshot({ path: '/tmp/chase-vm-welcome-before-prompt.png' });
-  await page.waitForTimeout(300);
-  assert.doesNotMatch(await page.locator('.xterm-rows').innerText(), /guest@chasefarrant\.com:~\$/);
   await waitReady(page);
-  assert((await page.evaluate(() => performance.now())) - welcomeShownAt >= 650, 'the welcome paragraph gets a pause before the prompt');
-  assert.match(await page.locator('.xterm-rows').innerText(), /guest@chasefarrant\.com:~\$/);
-  assert.doesNotMatch(await page.locator('.xterm-rows').innerText(), /EARLY_INPUT_SHOULD_NOT_RUN/);
+  await waitPrompt(page);
+  const history = await page.evaluate(() => window.__bootHistory);
+  const ready = history.findLastIndex(entry => entry.state === 'ready');
+  const [art, welcome, prompt] = history.slice(ready - 2, ready + 1);
+  assert.deepEqual([art.state, welcome.state, prompt.state], ['art', 'welcome', 'ready']);
+  assert(welcome.at - art.at >= 350, 'ASCII art gets a short pause before the welcome paragraph');
+  assert(prompt.at - welcome.at >= 750, 'the welcome paragraph gets a pause before the prompt');
+  for (const stage of [art, welcome]) {
+    assert(stage.frames.length, `${stage.state} was rendered before the next stage`);
+    assert.equal(stage.frames[0].hidden, true);
+    assert.equal(stage.frames[0].busy, 'true');
+    assert.equal(stage.frames[0].cursor, false);
+    assert.doesNotMatch(stage.frames[0].text, /guest@chasefarrant\.com:~\$/);
+  }
+  assert.doesNotMatch(art.frames[0].text, /Heyo|Start with ls\./);
+  assert.match(welcome.frames[0].text, /Heyo[\s\S]*Start with ls\./);
+  assert.doesNotMatch(await page.locator('.xterm-rows').innerText(), /x: (not found|command not found)/);
 }
 async function waitPrompt(page) {
   try { await page.waitForFunction(() => document.querySelector('.xterm-rows')?.innerText.trimEnd().endsWith('guest@chasefarrant.com:~$'), null, { timeout: 15000 }); }
@@ -100,6 +121,7 @@ async function expectTerminalTab(page, label, target) {
     let releaseImage;
     const imageGate = new Promise(resolve => { releaseImage = resolve; });
     await page.route('**/buildroot-bzimage68.bin', async route => { await imageGate; await route.continue(); });
+    await observeBoot(page);
     await page.goto(url);
     await page.locator('#boot-screen').waitFor({ state: 'visible' });
     await waitTextInBoot(page, 'Reading files');
@@ -311,15 +333,14 @@ async function expectTerminalTab(page, label, target) {
     await waitTextInBoot(page, 'Ready to boot');
     assert.equal(await page.locator('.boot-marker.is-done').count(), 3);
     await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'off');
-    const blankAt = await page.evaluate(() => performance.now());
-    assert.equal(await page.locator('#boot-screen').isVisible(), true);
-    assert.equal(await page.locator('#boot-log').textContent(), '');
-    assert.equal(await page.locator('.boot-cursor').isVisible(), false);
-    await page.screenshot({ path: '/tmp/chase-vm-reboot-blank.png' });
-    await page.waitForTimeout(300);
-    assert.equal(await page.locator('#boot-screen').getAttribute('data-state'), 'off');
     await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'loading');
-    assert((await page.evaluate(() => performance.now())) - blankAt >= 600, 'reboot includes a brief blank-screen pause');
+    const blank = await page.evaluate(() => {
+      const off = window.__bootHistory.findLastIndex(entry => entry.state === 'off');
+      return { ...window.__bootHistory[off], duration: window.__bootHistory[off + 1].at - window.__bootHistory[off].at };
+    });
+    assert(blank.duration >= 700, 'reboot includes a brief blank-screen pause');
+    assert.equal(blank.frames[0].hidden, false);
+    assert.equal(blank.frames[0].log, '');
     await waitForLogin(page);
     assert.notEqual(await page.locator('.boot-line[data-kind="easter-egg"]').textContent(), firstEgg);
     await command(page, 'stty -echo');
@@ -336,6 +357,7 @@ async function expectTerminalTab(page, label, target) {
 
     const mobile = await browser.newPage({ viewport: { width: 375, height: 667 }, isMobile: true, hasTouch: true });
     mobile.on('pageerror', error => errors.push(error.message));
+    await observeBoot(mobile);
     await mobile.goto(url);
     await mobile.screenshot({ path: '/tmp/chase-vm-mobile.png' });
     assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
@@ -360,6 +382,7 @@ async function expectTerminalTab(page, label, target) {
     const directBrowse = await browser.newPage();
     const directRequests = [];
     directBrowse.on('request', request => directRequests.push(request.url()));
+    await observeBoot(directBrowse);
     await directBrowse.goto(url + '/#portfolio');
     await directBrowse.locator('#portfolio').waitFor({ state: 'visible' });
     assert(!directRequests.some(request => /\.(wasm|bin)$/.test(request)));
