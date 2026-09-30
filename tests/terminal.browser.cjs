@@ -8,7 +8,9 @@ const url = process.env.TERMINAL_URL || 'http://127.0.0.1:8080';
 const waitTextInBoot = (page, text) => page.waitForFunction(text => document.querySelector('#boot-log').textContent.includes(text), text);
 const waitReady = page => page.waitForFunction(() => document.querySelector('#vm-status').textContent.includes('connected'), null, { timeout: 95000 });
 async function waitForLogin(page, checkInput = false) {
-  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'art', null, { timeout: 95000 });
+  // The terminal repaints on a later frame after returning from Browse.
+  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'art'
+    && document.querySelector('.xterm-rows')?.textContent.includes('::'), null, { timeout: 95000 });
   const artShownAt = await page.evaluate(() => performance.now());
   assert.equal(await page.locator('#boot-screen').isVisible(), false);
   assert.equal(await page.locator('#terminal-view').getAttribute('aria-busy'), 'true');
@@ -22,7 +24,8 @@ async function waitForLogin(page, checkInput = false) {
     await page.keyboard.press('Enter');
     await page.screenshot({ path: '/tmp/chase-vm-art-before-welcome.png' });
   }
-  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'welcome');
+  await page.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'welcome'
+    && /Heyo[\s\S]*Start with ls\./.test(document.querySelector('.xterm-rows')?.textContent));
   const welcomeShownAt = await page.evaluate(() => performance.now());
   assert(welcomeShownAt - artShownAt >= 250, 'ASCII art gets a short pause before the welcome paragraph');
   assert.match(await page.locator('.xterm-rows').innerText(), /Heyo[\s\S]*Start with ls\./);
