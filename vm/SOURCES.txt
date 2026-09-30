@@ -1,0 +1,90 @@
+www.chasefarrant.com browser Linux image
+
+All assets are served locally. Exact binary hashes and download locations
+are recorded in vm/assets.json in the website source repository:
+https://github.com/farrantch/www.chasefarrant.com
+
+v86 0.5.462 (5f9a90f), BSD-2-Clause:
+https://github.com/copy/v86
+The distribution's license is included as V86-LICENSE.txt.
+
+xterm.js 6.0.0, fit 0.11.0, web-links 0.12.0, MIT:
+https://github.com/xtermjs/xterm.js
+The distribution's license is included as XTERM-LICENSE.txt.
+
+Buildroot Linux image supplied by the v86 project:
+https://i.copy.sh/buildroot-bzimage68.bin
+https://github.com/copy/images
+Linux kernel 6.8.12 (GPL-2.0):
+https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.8.12.tar.xz
+Buildroot and package source information:
+https://buildroot.org/
+https://busybox.net/downloads/
+Guest tools retain their upstream licenses; the website MIT license does
+not relicense the Linux image, firmware, or other third-party components.
+
+SeaBIOS and VGA BIOS supplied by v86:
+https://github.com/copy/v86/tree/5f9a90f/bios
+https://www.seabios.org/
+
+The initramfs overlay, guest startup scripts, shell helpers, and generated
+portfolio files are in this website's vm/overlay and scripts directories.
+The external initramfs overlays the original image at boot; the vendored
+kernel image is unmodified.
+
+Terminal font: JetBrains Mono, served locally from /fonts/.
+
+Included license texts: BIOS-COPYING.LESSER (the license file supplied in
+v86's firmware directory) and LINUX-GPL-2.0.txt (also applicable to BusyBox).
+
+GNU nano 9.2, GPL-3.0-or-later:
+https://www.nano-editor.org/dist/v9/nano-9.2.tar.xz
+The unmodified corresponding source is included as nano-9.2.tar.xz beside
+this file. The build recipe and dependency list are nano-Dockerfile and
+nano-build-packages.txt, also in vm/programs/nano in the website repository.
+Compiled as a static i586 executable with Alpine Linux 3.23.6, musl 1.2.5,
+and ncurses 6.5 (20251123). See NANO-GPL-3.0.txt, MUSL-LICENSE.txt, and
+NCURSES-LICENSE.txt. Upstream library sources:
+https://musl.libc.org/releases/musl-1.2.5.tar.gz
+https://distfiles.alpinelinux.org/distfiles/v3.23/ncurses-6.5-20251123.tgz
+Alpine package recipes:
+https://gitlab.alpinelinux.org/alpine/aports/-/tree/3.23-stable/main/musl
+https://gitlab.alpinelinux.org/alpine/aports/-/tree/3.23-stable/main/ncurses
+
+Curl 8.22.0, curl license (MIT-style):
+https://curl.se/download/curl-8.22.0.tar.xz
+The unmodified source is included as curl-8.22.0.tar.xz beside this file.
+The recipe and dependency list are curl-Dockerfile and curl-build-packages.txt.
+The static i586 build includes OpenSSL 3.5.8 (Apache-2.0), zlib 1.3.2
+(Zlib), and musl 1.2.5 (MIT). See CURL-LICENSE.txt, OPENSSL-LICENSE.txt,
+ZLIB-LICENSE.txt, and MUSL-LICENSE.txt. Upstream sources:
+https://github.com/openssl/openssl/tree/openssl-3.5.8
+https://github.com/madler/zlib/tree/v1.3.2
+The CA certificate bundle comes from Alpine ca-certificates 20260909-r0,
+derived from Mozilla's trust store (MPL-2.0). See CA-CERTIFICATES-MPL-2.0.txt.
+https://gitlab.alpinelinux.org/alpine/aports/-/tree/3.23-stable/main/ca-certificates
+
+Terminal games (upstream source code is unmodified):
+
+vitetris 0.59.1, BSD-2-Clause:
+https://github.com/vicgeralds/vitetris/tree/9bbea4f5ab35d6fb8fe70c14daba19e7f35ab44e
+Source: vitetris-0.59.1.tar.gz. License: VITETRIS-LICENSE.txt.
+
+New BSD Games 6.0.2, CC0-1.0:
+https://github.com/abakh/nbsdgames/tree/9a1bd320fe360de04a4b2e8b9d50dbe3a52d7acb
+Source: nbsdgames-6.0.2.tar.gz. License: NBSDGAMES-LICENSE.txt.
+
+2048.c, MIT, commit afc8898691f54d43309497f4c32682fe90bb5f57:
+https://github.com/mevdschee/2048.c/tree/afc8898691f54d43309497f4c32682fe90bb5f57
+Source: 2048-afc88986.tar.gz. License: 2048-LICENSE.txt.
+
+The archives above, games-Dockerfile, games-build-packages.txt, and
+games-sources.json are published beside this file. Games are compiled for
+32-bit x86 with Alpine 3.23.6. Tetris links musl and ncurses statically; 2048 links musl statically. New BSD
+Games bundles musl 1.2.5 and ncurses 6.5 (20251123) under /opt/nbsdgames/lib.
+See the library sources and licenses listed in the nano section above.
+
+Carlito italic, SIL Open Font License 1.1:
+https://github.com/google/fonts/tree/main/ofl/carlito
+Used for the corrected Veritone date in the public résumé PDF.
+The embedded font is subsetted; see CARLITO-OFL.txt.

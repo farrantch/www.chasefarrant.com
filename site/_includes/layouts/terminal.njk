@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ description }}">
+    <meta name="theme-color" content="#0b0e0c">
+    <title>Chase Farrant</title>
+    {% include "favicons.njk" %}
+    <link rel="preload" href="/fonts/jetbrains-mono-v18-cyrillic_cyrillic-ext_greek_latin_latin-ext_vietnamese-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="{{ vm.base }}terminal.css">
+    <link rel="stylesheet" href="{{ vm.base }}xterm.css">
+  </head>
+  <body>{{ content | safe }}</body>
+</html>

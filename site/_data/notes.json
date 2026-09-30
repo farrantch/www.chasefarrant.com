@@ -1,0 +1,24 @@
+[
+  {
+    "slug": "cloudformation",
+    "source": "blog/aws-cloudformation-best-practices/index.md",
+    "title": "Working with CloudFormation",
+    "description": "Notes on organizing templates, naming resources, and keeping infrastructure changes manageable.",
+    "highlights": [
+      "Use consistent names and template structure so resources are easy to find.",
+      "Catch template problems early with linting and local deployment checks.",
+      "Think through shared stacks, dependencies, and how values pass between them."
+    ]
+  },
+  {
+    "slug": "startup-infrastructure",
+    "source": "blog/infrastructure-patterns-that-startups-should-avoid/index.md",
+    "title": "Keeping startup infrastructure simple",
+    "description": "Why I try to keep early systems easy to change as their requirements develop.",
+    "highlights": [
+      "Weigh the coordination cost before splitting an application into services.",
+      "Adopt Kubernetes when its benefits justify the operational work.",
+      "Use infrastructure modules to simplify a recurring task, rather than wrapping every individual resource."
+    ]
+  }
+]

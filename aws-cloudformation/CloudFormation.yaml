@@ -83,29 +83,44 @@ Resources:
         Aliases:
           - !Sub www.${RootDomain}
         CacheBehaviors:
-          - AllowedMethods:
-            - GET
-            - HEAD
-            - OPTIONS
-            CachedMethods:
-            - HEAD
-            - GET
-            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
-            PathPattern: '*/'
+          - PathPattern: 'vm/manifest.json'
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD]
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            Compress: true
             ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyNever
             TargetOriginId: S3Origin
             ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: 'vm/*'
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD]
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            Compress: true
+            ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyForever
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: 'gen/*'
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD]
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            Compress: true
+            ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyForever
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+          - PathPattern: 'fonts/*'
+            AllowedMethods: [GET, HEAD, OPTIONS]
+            CachedMethods: [GET, HEAD]
+            CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            Compress: true
+            ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyForever
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
         DefaultCacheBehavior:
-          AllowedMethods:
-            - GET
-            - HEAD
-            - OPTIONS
-          CachedMethods:
-            - HEAD
-            - GET
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          AllowedMethods: [GET, HEAD, OPTIONS]
+          CachedMethods: [GET, HEAD]
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
           Compress: true
-          ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyForever
+          ResponseHeadersPolicyId: !Ref CloudFrontResponeHeadersPolicyNever
           TargetOriginId: S3Origin
           ViewerProtocolPolicy: redirect-to-https
         Enabled: true
@@ -149,8 +164,8 @@ Resources:
         CustomHeadersConfig: 
           Items: 
             - Header: Cache-Control
-              Override: false
-              Value: max-age=31536000
+              Override: true
+              Value: public, max-age=31536000, immutable
         Name: !Sub ${Prefix}-${Environment}-${ServiceName}-CloudFrontResponseHeadersPolicyForever
   CloudFrontResponeHeadersPolicyNever:
     Type: AWS::CloudFront::ResponseHeadersPolicy
@@ -159,8 +174,8 @@ Resources:
         CustomHeadersConfig: 
           Items: 
             - Header: Cache-Control
-              Override: false
-              Value: max-age=0
+              Override: true
+              Value: no-cache, max-age=0, must-revalidate
         Name: !Sub ${Prefix}-${Environment}-${ServiceName}-CloudFrontResponseHeadersPolicyNever
   Route53HostedZone:
     Type: AWS::Route53::HostedZone
@@ -204,6 +219,10 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
+      # Existing buckets have no ownership controls and use legacy ObjectWriter behavior.
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
       WebsiteConfiguration:
         RedirectAllRequestsTo:
           HostName: !Sub "www.${RootDomain}"
@@ -212,6 +231,10 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: PublicRead
+      # Existing buckets have no ownership controls and use legacy ObjectWriter behavior.
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: ObjectWriter
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
@@ -250,6 +273,9 @@ Resources:
                       - /
                       - Ref: AWS::StackId
 Outputs:
+  SiteUrl:
+    Description: Public website URL.
+    Value: !Sub https://www.${RootDomain}
   CloudFrontDistributionIdWww:
     Description: The CloudFront Distribution for the website.
     Value: !Ref CloudFrontDistributionWww

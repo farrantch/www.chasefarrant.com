@@ -1,0 +1,29 @@
+[
+  {
+    "name": "vitetris",
+    "repository": "vicgeralds/vitetris",
+    "revision": "9bbea4f5ab35d6fb8fe70c14daba19e7f35ab44e",
+    "version": "0.59.1",
+    "archive": "vitetris-0.59.1.tar.gz",
+    "url": "https://codeload.github.com/vicgeralds/vitetris/tar.gz/9bbea4f5ab35d6fb8fe70c14daba19e7f35ab44e",
+    "sha256": "e9035ac874d44582843a7f48a3bbf9c0f89b618a015f018c18672e4af758e6b6"
+  },
+  {
+    "name": "nbsdgames",
+    "repository": "abakh/nbsdgames",
+    "revision": "9a1bd320fe360de04a4b2e8b9d50dbe3a52d7acb",
+    "version": "6.0.2",
+    "archive": "nbsdgames-6.0.2.tar.gz",
+    "url": "https://codeload.github.com/abakh/nbsdgames/tar.gz/9a1bd320fe360de04a4b2e8b9d50dbe3a52d7acb",
+    "sha256": "95f9f855557c8d8359d56c175213d3c2f641cfb5744d9bbcc3226d7129087916"
+  },
+  {
+    "name": "2048",
+    "repository": "mevdschee/2048.c",
+    "revision": "afc8898691f54d43309497f4c32682fe90bb5f57",
+    "version": "afc88986",
+    "archive": "2048-afc88986.tar.gz",
+    "url": "https://codeload.github.com/mevdschee/2048.c/tar.gz/afc8898691f54d43309497f4c32682fe90bb5f57",
+    "sha256": "7fcd88c09c38cbecdf6cbd47ef88787d0a42b2f7e36ad97a6bfbf3ae114db38c"
+  }
+]

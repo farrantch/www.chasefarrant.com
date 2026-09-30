@@ -1,0 +1,9 @@
+export PATH=/usr/local/bin:/usr/bin:/bin:/opt/vitetris/bin:/opt/nbsdgames/bin:/opt/2048/bin:/usr/sbin:/sbin
+export TERM=xterm-256color
+export PAGER=less EDITOR=nano VISUAL=nano
+export ENV="$HOME/.shrc"
+cd "$HOME"
+[ -r "$ENV" ] && . "$ENV"
+printf '\033[?25l'
+welcome
+printf '\033]777;ready\007\033[?25h'

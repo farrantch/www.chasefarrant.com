@@ -1,0 +1,298 @@
+{
+  "source": "/ChaseFarrant-Resume.pdf",
+  "note": "My work spans IT operations, release automation, and cloud infrastructure.",
+  "roles": [
+    {
+      "slug": "veritone",
+      "directory": "2022_veritone",
+      "company": "Veritone",
+      "title": "Staff Engineer",
+      "dates": "April 2022 – February 2024",
+      "location": "Remote",
+      "summary": "Worked across engineering teams to simplify releases, replace legacy deployment tooling, and modernize the infrastructure behind builds and operations.",
+      "sections": [
+        {
+          "heading": "Coordinated releases",
+          "items": [
+            "Worked with management and lead developers to define a unified version number across 27 services, allowing a coordinated release to be deployed with a single version.",
+            "Built deployment orchestration in Python using multithreading. The largest environment spanned 1,000+ EC2 instances, 30+ load balancers, and 20+ Auto Scaling groups. Reduced deployment time from 12 hours to 35 minutes without downtime."
+          ]
+        },
+        {
+          "heading": "Deployment tooling",
+          "items": [
+            "Replaced legacy Ruby deployment tooling with Python for 60+ Docker containers across multiple business units, reducing the deployment code by 96%.",
+            "Standardized the deployment model across services and environments. Added deployments driven by configuration, clearer logging, error handling, and tests.",
+            "Maintained and debugged existing build and deployment scripts, simplified code paths, and added features needed by the engineering teams."
+          ]
+        },
+        {
+          "heading": "Build and operations infrastructure",
+          "items": [
+            "Provisioned EKS clusters with Terraform and used ArgoCD and Helm charts to deploy operational services.",
+            "Moved legacy Jenkins infrastructure onto Kubernetes and managed its configuration as code with Groovy.",
+            "Migrated builds to GitHub Actions. Containerized builds and applications with Docker, and reduced build times for multiple applications."
+          ]
+        }
+      ],
+      "tools": [
+        "Python",
+        "AWS EC2",
+        "Auto Scaling",
+        "Docker",
+        "Kubernetes / EKS",
+        "Terraform",
+        "ArgoCD",
+        "Helm",
+        "Jenkins",
+        "Groovy",
+        "GitHub Actions"
+      ]
+    },
+    {
+      "slug": "artisan-viagio",
+      "directory": "2020_artisan-viagio",
+      "company": "Viagio Technologies / Artisan Technology Group",
+      "title": "Senior Cloud Engineer / Cloud Engineer",
+      "dates": "April 2020 – April 2022",
+      "location": "Kansas City · Remote",
+      "summary": "Designed, built, and operated AWS and Azure infrastructure for consulting clients. Progressed from Cloud Engineer to Senior Cloud Engineer, combining client delivery with technical guidance for the cloud engineering team.",
+      "sections": [
+        {
+          "heading": "Client architecture and onboarding",
+          "items": [
+            "Built infrastructure and CI/CD pipelines for seven new projects across AWS and Azure.",
+            "Reduced client onboarding from months to days with reusable infrastructure and pipeline templates. Used CloudFormation, CodeBuild, and CodePipeline on AWS, and ARM/Bicep and Azure DevOps templates on Azure.",
+            "Worked with clients and lead developers to design solutions around their requirements, balancing cost, quality, and delivery time.",
+            "Owned infrastructure as code, Dockerfiles, build pipelines, and deployment processes for 15+ clients."
+          ]
+        },
+        {
+          "heading": "Existing infrastructure and ongoing operations",
+          "items": [
+            "Brought a large client's manually created infrastructure into Terraform by first standardizing resources across environments, then importing them into code.",
+            "Refactored and updated Terraform templates for multiple clients.",
+            "Provided ongoing infrastructure support and consulting for four long-term clients. Supported legacy systems while gradually refactoring them to make maintenance easier.",
+            "Wrote Python functions and scripts for infrastructure automation, and served as a primary contact for cloud architecture, CI/CD, and infrastructure troubleshooting."
+          ]
+        },
+        {
+          "heading": "Account organization and engineering practice",
+          "items": [
+            "Documented and rolled out an AWS Organizations structure with multiple accounts, SSO access, and account switching through the CLI.",
+            "Developed a method for managing CloudFormation StackSets across organizational AWS accounts.",
+            "Established shared practices and guidelines for managing infrastructure as code.",
+            "Prepared documentation and architecture diagrams for client handovers so clients could operate and maintain the systems after offboarding.",
+            "Provided technical guidance and feedback to two direct reports on the Cloud Engineering team."
+          ]
+        }
+      ],
+      "tools": [
+        "AWS",
+        "Azure",
+        "Terraform",
+        "CloudFormation / StackSets",
+        "ARM / Bicep",
+        "CodeBuild",
+        "CodePipeline",
+        "Azure DevOps",
+        "AWS Organizations",
+        "Docker",
+        "Python"
+      ],
+      "history": "Artisan Technology Group was renamed Viagio Technologies in May 2022."
+    },
+    {
+      "slug": "balance-innovations",
+      "directory": "2017_balanceinnovations->brinks",
+      "company": "Balance Innovations",
+      "title": "Cloud Automation Engineer",
+      "dates": "May 2017 – April 2020",
+      "location": "Kansas City metropolitan area · Hybrid",
+      "summary": "Helped move AWS infrastructure, service delivery, and routine operations into code. The work covered application environments, account access, patching, backups, and the tools developers used to build and release services.",
+      "sections": [
+        {
+          "heading": "Infrastructure and service delivery",
+          "items": [
+            "Reduced setup time for new single-tenant application environments by 95% with CloudFormation templates, while making existing environments easier to maintain.",
+            "Established CloudFormation as the standard for AWS resources, used exports to connect stacks, and brought infrastructure and application changes into the same delivery pipelines.",
+            "Automated CodePipeline setup and maintenance across multiple AWS accounts for 30+ services, with deployment roles scoped to individual services.",
+            "Developed CloudFormation custom resources in Python for Auth0, Cognito, and Okta. The Auth0 tooling managed applications, clients, and scopes through code rather than manual console changes."
+          ]
+        },
+        {
+          "heading": "Account organization, access, and auditability",
+          "items": [
+            "Implemented a multi-account AWS Organizations strategy, planned migration paths, and automated account creation and management through a pipeline.",
+            "Introduced SSO for the AWS console and CLI, using Python to obtain and store temporary credentials.",
+            "Built a shared pipeline for managing IAM users, policies, roles, and KMS keys.",
+            "Developed an Access Provisioner Lambda in Python to grant access to EC2 and RDS instances through Systems Manager commands.",
+            "Centralized CloudTrail and VPC logs across AWS accounts and made them queryable with Athena for audits and investigation.",
+            "Assisted with SOC audit work and AWS Partner certification."
+          ]
+        },
+        {
+          "heading": "Patching, recovery, and operations",
+          "items": [
+            "Automated patching for 100+ Windows and Linux servers without downtime using Systems Manager maintenance windows, patch groups, documents, and patch baselines. Replaced roughly 20 hours of manual patching each month.",
+            "Managed Systems Manager documents through code and deployment pipelines rather than maintaining them individually.",
+            "Implemented AWS Backup and wrote a Python Lambda to email backup summaries.",
+            "Migrated three on-premises applications to AWS and configured customer VPN tunnels.",
+            "Purchased EC2 and RDS reserved instances and monitored utilization.",
+            "Maintained GitLab, TeamCity, Octopus Deploy, TFS, and Auth0, and handled cloud architecture and CI/CD troubleshooting."
+          ]
+        },
+        {
+          "heading": "Application architecture",
+          "items": [
+            "Helped developers design AWS services and standardize a stack built around API Gateway, Lambda, DynamoDB, and SNS/SQS.",
+            "Advised development teams on DynamoDB table design and helped them apply new design practices."
+          ]
+        }
+      ],
+      "tools": [
+        "AWS",
+        "Python",
+        "CloudFormation",
+        "CodePipeline",
+        "Systems Manager",
+        "AWS Organizations",
+        "IAM / KMS",
+        "Lambda",
+        "Auth0",
+        "Cognito",
+        "Okta",
+        "CloudTrail",
+        "Athena",
+        "AWS Backup",
+        "DynamoDB",
+        "GitLab",
+        "TeamCity",
+        "Octopus Deploy",
+        "TFS"
+      ],
+      "history": "Brink's acquired Balance Innovations in June 2019."
+    },
+    {
+      "slug": "avalara",
+      "directory": "2014_billsoft->eztax->avalara",
+      "company": "BillSoft / EZTax / Avalara",
+      "title": "Continuous Integration Engineer / Network Administrator",
+      "dates": "June 2014 – May 2017",
+      "location": "Overland Park, Kansas · On-site",
+      "summary": "Started in network administration and production operations, then moved into continuous integration and release automation. Worked across application delivery, SQL Server maintenance, monitoring, and internal tools.",
+      "sections": [
+        {
+          "heading": "Continuous Integration Engineer",
+          "dates": "February 2016 – May 2017",
+          "items": [
+            "Automated deployments and database migrations for 17 applications across all environments with Ansible Tower. Replaced error-prone manual releases and substantially reduced deployment issues and downtime.",
+            "Maintained Jenkins, Ansible, and AWS delivery tooling, and standardized build and release pipelines with push-button deployments.",
+            "Led the migration of three web applications to AWS, using EC2 instances and load balancers.",
+            "Implemented deployments without downtime using AWS load balancers, EC2 replacement, and instance initialization scripts.",
+            "Used database snapshots to support repeatable SQL migration scripts.",
+            "Wrote a SQL Server script to restore the entire UAT environment from production, saving about two days of manual work per refresh.",
+            "Worked with developers, QA, project managers, and IT to identify recurring delivery problems and resolve them through automation."
+          ]
+        },
+        {
+          "heading": "Network Administrator",
+          "dates": "June 2014 – February 2016",
+          "items": [
+            "Managed, monitored, and maintained SaaS environments, including deployment and configuration of 20+ in-house applications and web services across QA, UAT, and production.",
+            "Created 30+ SQL jobs for index maintenance, daily backups, and weekly restore testing to improve database reliability and recovery readiness.",
+            "Managed disk and tape backups for virtual servers with Veeam Backup & Replication.",
+            "Implemented PRTG monitoring for 150+ servers and devices, with dashboards for shared and internal use.",
+            "Built an ASP.NET Web Forms intranet application for managing clients.",
+            "Developed a C# application to automate customer data processing.",
+            "Built a C# tool to search and traverse WatchGuard firewall XML configurations for auditing.",
+            "Managed the internal network for 70+ users.",
+            "Set up a company wiki for shared documentation.",
+            "Created a simulated phishing website to assess employee susceptibility."
+          ]
+        }
+      ],
+      "tools": [
+        "Ansible Tower",
+        "Jenkins",
+        "AWS EC2",
+        "SQL Server",
+        "C#",
+        "ASP.NET Web Forms",
+        "Veeam Backup & Replication",
+        "PRTG",
+        "WatchGuard"
+      ],
+      "history": "BillSoft became EZtax in October 2014. Avalara acquired EZtax in June 2015."
+    },
+    {
+      "slug": "payless",
+      "directory": "2013_payless",
+      "company": "Payless ShoeSource",
+      "title": "Endpoint Engineer Intern",
+      "dates": "Summer 2013",
+      "location": "Topeka, Kansas",
+      "summary": "Worked on endpoint automation, server upgrades, and store networking during a summer internship.",
+      "sections": [
+        {
+          "heading": "Endpoint automation",
+          "items": [
+            "Wrote 15–20 VBScript installers for application deployment through Microsoft Deployment Toolkit.",
+            "Deployed an SCCM script to remove unwanted applications and malware from 1,200+ PCs."
+          ]
+        },
+        {
+          "heading": "Servers and store networks",
+          "items": [
+            "Helped upgrade three Windows Server 2003 systems to Windows Server 2008 across test and production environments.",
+            "Reorganized a VMware environment containing 120+ virtual machines and reclaimed 30% of previously used resources.",
+            "Reconfigured 20+ Juniper routers for company stores."
+          ]
+        }
+      ],
+      "tools": [
+        "VBScript",
+        "SCCM",
+        "Microsoft Deployment Toolkit",
+        "Windows Server",
+        "VMware / vSphere",
+        "Juniper"
+      ]
+    },
+    {
+      "slug": "kansas-state",
+      "directory": "2010_kansas-state",
+      "company": "Kansas State University",
+      "title": "Network Technical Assistant",
+      "dates": "April 2010 – July 2012",
+      "location": "Manhattan, Kansas",
+      "summary": "Supported the Office of Admissions and Student Financial Aid, maintaining computer systems and helping simplify workstation deployment.",
+      "sections": [
+        {
+          "heading": "Workstation deployment",
+          "items": [
+            "Helped upgrade office computers to Windows 7.",
+            "Reduced the number of Windows 7 images from eleven to two, covering x86 and x64 systems.",
+            "Simplified Windows installation through USB deployment using ImageX, Sysprep, and Microsoft Deployment Toolkit.",
+            "Deployed printers through Active Directory and Group Policy."
+          ]
+        },
+        {
+          "heading": "Day-to-day IT support",
+          "items": [
+            "Maintained computer systems in Anderson and Fairchild Hall, covering network administration, machine imaging, software and operating system installation, and troubleshooting.",
+            "Wrote scripts, maintained websites, and improved the organization of the network."
+          ]
+        }
+      ],
+      "tools": [
+        "Windows 7",
+        "Active Directory",
+        "Group Policy",
+        "ImageX",
+        "Sysprep",
+        "Microsoft Deployment Toolkit"
+      ]
+    }
+  ]
+}

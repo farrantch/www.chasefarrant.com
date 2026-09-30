@@ -1,9 +1,11 @@
 version: 0.2
 phases:
+  install:
+    runtime-versions:
+      nodejs: 22
+    commands:
+      - node --version
   build:
     on-failure: ABORT
     commands:
-      - CLOUDFRONT_DISTRIBUTION_WWW=$(aws cloudformation describe-stacks --stack-name ${PREFIX}-${ENVIRONMENT}-${SERVICE_NAME} --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionIdWww`].OutputValue' --output text)
-      - S3_BUCKET_WWW=$(aws cloudformation describe-stacks --stack-name ${PREFIX}-${ENVIRONMENT}-${SERVICE_NAME} --query 'Stacks[0].Outputs[?OutputKey==`S3BucketNameWww`].OutputValue' --output text)
-      - aws s3 sync site/_site/ s3://$S3_BUCKET_WWW --delete
-      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_WWW --paths '/*'
+      - node scripts/deploy.cjs --stack "$PREFIX-$ENVIRONMENT-$SERVICE_NAME" --archive-bucket "$PIPELINE_S3_BUCKET_NAME" --execute

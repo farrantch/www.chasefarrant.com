@@ -5,16 +5,31 @@ tags:
   - projects
   - 11ty
   - eleventy
-title: chasefarrant.com
+title: www.chasefarrant.com
 ---
 
 # {{ title }}
 _Created on {{ page.date | asPostDate }}_
 
-#### GitHub Source <a href="https://github.com/farrantch/chasefarrant.com" target="_blank" style="text-decoration:none">&#11016;</a>
+#### GitHub Source <a href="https://github.com/farrantch/www.chasefarrant.com" target="_blank" style="text-decoration:none">&#11016;</a>
 
 &nbsp;
-## Overview
+## Explore the portfolio in Linux
+
+The home page now boots a real Linux guest in the browser using v86, with
+xterm.js connected to its serial console. Files generated from the same project
+records and articles live under `/home/guest`. Ordinary Linux programs handle
+navigation, search, pipes, editing, and shell scripts.
+
+The terminal starts automatically as guest, showing download and boot progress.
+A single navbar also offers a Browse view for visitors who prefer links.
+The VM has a temporary writable filesystem and runs without a guest network
+connection. The entire site is still served as
+static files through the AWS pipeline below.
+
+[Image customization and security notes](https://github.com/farrantch/www.chasefarrant.com/blob/main/vm/README.md)
+
+## Original site design
 Confession time... &nbsp; _I kinda loathe front-end web development._  &nbsp; Because of this, I have a huge soft spot for minimalist websites that convey information cleanly and concisely. Some famous examples include:
  - [https://motherfuckingwebsite.com](https://motherfuckingwebsite.com)
  - [https://berkshirehathaway.com](https://berkshirehathaway.com)

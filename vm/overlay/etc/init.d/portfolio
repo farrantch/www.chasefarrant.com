@@ -1,0 +1,23 @@
+#!/bin/sh
+export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+mount -t devtmpfs devtmpfs /dev
+mkdir -p /dev/pts /tmp /run
+mount -t devpts devpts /dev/pts
+chmod 1777 /tmp
+hostname -F /etc/hostname
+echo 0 > /proc/sys/kernel/printk
+chown -R 1000:1000 /home/guest
+mkdir -p /var/opt/nbsdgames /var/opt/vitetris
+touch /var/opt/vitetris/hiscores
+chown -R 1000:1000 /var/opt/nbsdgames /var/opt/vitetris
+# A separate serial port carries window dimensions, never shell input.
+stty -F /dev/ttyS1 115200 -echo
+(
+  while read -r rows cols; do
+    case "$rows:$cols" in *[!0-9:]*|:*|*:) continue ;; esac
+    [ "$rows" -ge 2 ] && [ "$rows" -le 500 ] && [ "$cols" -ge 2 ] && [ "$cols" -le 1000 ] &&
+      stty -F /dev/ttyS0 rows "$rows" cols "$cols"
+  done < /dev/ttyS1
+) &

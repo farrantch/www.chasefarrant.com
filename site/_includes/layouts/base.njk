@@ -6,50 +6,59 @@ title: Chase Farrant
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="description" content="{{ description }}">
+    <meta name="description" content="{{ description or 'Projects, experiments, and practical notes by Chase Farrant.' }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preload" href="/fonts/noto-sans-v35-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/noto-sans-v35-latin-700italic.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/noto-sans-v35-latin-italic.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/noto-sans-v35-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/quicksand-v31-latin-500.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/quicksand-v31-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="/fonts/quicksand-v31-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <meta name="theme-color" content="{% if bodyClass == 'catalog-page' %}#040806{% else %}#eeebe2{% endif %}">
+
+    {% if bodyClass == 'catalog-page' %}
     <link rel="preload" href="/fonts/jetbrains-mono-v18-cyrillic_cyrillic-ext_greek_latin_latin-ext_vietnamese-regular.woff2" as="font" type="font/woff2" crossorigin>
-    <link href="{{ '/css/photoswipe.css' | url | bust }}" rel="stylesheet" />
-    <link href="{{ '/css/styles.css' | url | bust }}" rel="stylesheet" />
-    <link href="{{ '/css/prism.css' | url | bust }}" rel="stylesheet" />
-    <script async src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
-    <script async src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
-    {% favicons 'favicon.png', appleIconBgColor='#123' %}
-    <title>{{ title }}</title>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-ZX4DD1Y9MK');
-    </script>
+    {% else %}
+    <link rel="preload" href="/fonts/noto-sans-v35-latin-regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/noto-sans-v35-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="{{ '/css/photoswipe.css' | url | bust }}" rel="stylesheet">
+    <link href="{{ '/css/prism.css' | url | bust }}" rel="stylesheet">
+    <script defer src="https://unpkg.com/prismjs@v1.x/components/prism-core.min.js"></script>
+    <script defer src="https://unpkg.com/prismjs@v1.x/plugins/autoloader/prism-autoloader.min.js"></script>
+    {% endif %}
+    <link href="{{ '/css/styles.css' | url | bust }}" rel="stylesheet">
+    {% if bodyClass == 'catalog-page' %}<link href="{{ '/css/archive.css' | url | bust }}" rel="stylesheet">{% endif %}
+
+    {% include "favicons.njk" %}
+    <title>{% if title and title != 'Chase Farrant' %}{{ title }} — {% endif %}Chase Farrant</title>
   </head>
-  <body>
-    <div class="name">
-        <h3><a href="/">Chase Farrant</a></h3>
-    </div>
-    <div class="menubar">
-        <a href="/about">About</a> &nbsp; | &nbsp;
-        <a href="/blog">Blog</a> &nbsp; | &nbsp;
-        <a href="/projects">Projects</a> &nbsp;
-    </div>
-    &nbsp;
-    {{ content | safe }}
+  <body class="{{ bodyClass or '' }}">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-mark" href="/" aria-label="Chase Farrant, return to terminal">
+          <span class="site-mark__index">CF</span>
+          <span class="site-mark__name">Chase Farrant</span>
+        </a>
+
+        <nav class="site-nav" aria-label="Primary navigation">
+          <a href="/"{% if page.url == '/' %} aria-current="page"{% endif %}>Return to terminal</a>
+          <a href="/blog/"{% if '/blog/' in page.url %} aria-current="page"{% endif %}>Notes</a>
+          <a href="/about/"{% if page.url == '/about/' %} aria-current="page"{% endif %}>About</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main-content" class="site-main">
+      <div class="{% if bodyClass == 'catalog-page' %}catalog-shell{% else %}prose{% endif %}">
+        {{ content | safe }}
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <p>An incomplete record, by design.</p>
+        <p>
+          <a href="https://github.com/farrantch" rel="me">GitHub</a>
+          <span aria-hidden="true">/</span>
+          <a href="mailto:hello@chasefarrant.com">Email</a>
+        </p>
+      </div>
+    </footer>
   </body>
-  <footer>
-    &nbsp;
-    <hr style="text-align:left;margin-left:0">
-    <p>
-        <b> &copy; 2024 </b> Chase Farrant 
-    </p>
-    <p>
-        Website created by <a href="https://wiredby.design" target="_blank" rel="noopener noreferrer" aria-label="Wired By Design (opens in a new tab)">Wired By Design</a>
-    </p>
-  </footer>
 </html>

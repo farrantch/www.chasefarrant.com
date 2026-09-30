@@ -1,0 +1,21 @@
+Keyboard shortcuts
+==================
+
+Tab                      Complete a command or path
+Up / Down                Recall previous commands
+Ctrl+L                   Clear the display
+Ctrl+C                   Stop the current program (no text selected)
+Shift+Tab                Move focus out of the terminal
+
+Copy and paste
+--------------
+
+Copy selected text with Ctrl+C or Ctrl+Shift+C.
+Paste with Ctrl+V or Ctrl+Shift+V. On Mac, use Cmd+C and Cmd+V.
+The browser context menu also supports copy and paste.
+
+Reading and editing
+-------------------
+
+In less: Space advances a page, / searches, and q exits.
+In nano: Ctrl+O saves, Enter confirms, and Ctrl+X exits.
