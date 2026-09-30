@@ -1,24 +1,16 @@
-This session
-============
+Runtime
+  User      guest (uid 1000)
+  Shell     BusyBox ash; flags may differ from GNU tools
+  Tools     commands lists installed tools; no package manager
 
-Files
------
-Your home directory and /tmp are writable. Changes last for this visit.
-Refreshing, closing the page, or running reboot discards them.
-Switching to Browse pauses the session; Terminal resumes it.
+Storage
+  Writable  Home directory and /tmp
+  Lifetime  RAM only; reload, close, or reboot discards changes
+  Browse    Pauses the VM; Terminal resumes it
 
 Networking
-----------
-Internet access is currently disabled. Network tools such as curl and
-ping cannot reach other hosts. Use open to visit links in your browser.
+  Guest     No network access; curl, wget, and ping are offline
+  Browser   open prints links handled by the host browser
 
-Tools
------
-The shell is ash. Most utilities come from BusyBox; flags can differ
-from their GNU equivalents. Use COMMAND --help for a tool's options.
-Nano, curl, Lua, joe, ed, and links are also installed.
-There is no package manager. commands lists tools by task.
-
-Restarting
-----------
-Type reboot or refresh the page to start a fresh session as guest.
+Reset
+  reboot    Start a fresh VM as guest

@@ -9,6 +9,8 @@ const expectedPDF = fs.readFileSync(path.resolve(__dirname, '../site/ChaseFarran
     console.log(`${name}: starting browser checks.`);
     const browser = await engine.launch({ headless: true });
     try {
+      await require('./startup.browser.cjs')(browser, url, viewport);
+      console.log(`${name}: first paint, reload, section links, blocked modules, and no-JS passed.`);
       const page = await browser.newPage({ viewport, acceptDownloads: true });
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));

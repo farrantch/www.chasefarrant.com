@@ -48,8 +48,15 @@ try {
   await run("mkdir sandbox; printf '#!/bin/sh\\nprintf SCRIPT_OK\\n' > sandbox/run; chmod +x sandbox/run; sandbox/run | grep SCRIPT_OK");
   await run("cp about/readme.txt sandbox/copy; ln -s copy sandbox/link; cmp sandbox/link about/readme.txt; find sandbox -type f | grep copy");
   await run('grep -ri cloud projects | head -n 3; tree -L 1; vi --help >/dev/null 2>&1; command -v less');
-  assert.match(await run('help'), /Getting around/);
-  assert.match(await run('cd /tmp; help keys; help session; commands; cd ~'), /Keyboard shortcuts[\s\S]*Internet access is currently disabled[\s\S]*Tools by task/);
+  assert.match(await run('help'), /Navigation[\s\S]*Portfolio[\s\S]*Reference/);
+  await run('help > /tmp/help.txt; cmp /tmp/help.txt /usr/local/share/portfolio/help.txt');
+  await run('help invalid >/tmp/help-error.txt 2>&1; test "$?" -eq 1 && grep -q Usage /tmp/help-error.txt');
+  const narrowHelp = await run('stty cols 40; NO_COLOR=1 help; stty cols 153');
+  const helpText = narrowHelp.slice(narrowHelp.indexOf('Navigation'), narrowHelp.indexOf('Command options') + 'Command options'.length);
+  assert.match(helpText, /  ls \[path\]\r\n    List directory contents/);
+  assert.doesNotMatch(helpText, /\x1b/);
+  assert(helpText.split('\r\n').every(line => line.length <= 40), helpText);
+  assert.match(await run('cd /tmp; help keys; help session; commands; cd ~'), /Clipboard[\s\S]*No network access[\s\S]*Tools by task/);
   await run('test ! -e readme.txt && test ! -e employment && test ! -e about.txt && test ! -e projects/index.txt && test ! -e notes/index.txt');
   await run('for section in about projects notes contact; do test -s "$section/readme.txt" || exit 1; done');
   assert.match(await run("cat ~/career/'2014_billsoft->eztax->avalara'/role.txt"), /BillSoft \/ EZTax \/ Avalara/);

@@ -5,4 +5,38 @@ case "${1:-}" in
   *) printf 'Usage: help [keys|session|games]\n' >&2; exit 1 ;;
 esac
 if [ "$#" -gt 1 ]; then printf 'Usage: help [keys|session|games]\n' >&2; exit 1; fi
-cat "/usr/local/share/portfolio/$topic.txt"
+file="/usr/local/share/portfolio/$topic.txt"
+# Pipes and redirected output remain plain text.
+[ -t 1 ] || { cat "$file"; exit; }
+set -- $(stty size 2>/dev/null)
+cols=${2:-80}
+case "$cols" in ''|*[!0-9]*) cols=80 ;; esac
+[ "$cols" -ge 20 ] || cols=80
+awk -v width="$cols" -v color="${NO_COLOR+x}" '
+function wrap(text, indent, words, count, i, line) {
+  count = split(text, words, / +/)
+  line = indent
+  for (i = 1; i <= count; i++) {
+    if (length(line) > length(indent) && length(line) + 1 + length(words[i]) > width) {
+      print line
+      line = indent
+    }
+    line = line (line == indent ? "" : " ") words[i]
+  }
+  print line
+}
+/^[^ ]/ {
+  if (color == "" && ENVIRON["TERM"] != "dumb") printf "\033[32m%s\033[0m\n", $0
+  else print
+  next
+}
+/^  / && width < 72 {
+  row = substr($0, 3)
+  if (match(row, /  +/)) {
+    print "  " substr(row, 1, RSTART - 1)
+    wrap(substr(row, RSTART + RLENGTH), "    ")
+  } else wrap(row, "  ")
+  next
+}
+{ print }
+' "$file"

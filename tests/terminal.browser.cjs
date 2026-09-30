@@ -24,7 +24,7 @@ async function observeBoot(page) {
       if (!['art', 'welcome', 'ready', 'off'].includes(state)) return;
       const text = document.querySelector('.xterm-rows')?.textContent || '';
       const matches = state === 'art' ? text.includes('::') && !text.includes('Heyo')
-        : state === 'welcome' ? /Heyo[\s\S]*Start with ls\./.test(text)
+        : state === 'welcome' ? /Heyo[\s\S]*Start with ls or help\./.test(text)
         : state === 'ready' ? text.includes('guest@chasefarrant.com:~$') : true;
       if (matches && !current.frames.length) current.frames.push({
         text, cursor: Boolean(document.querySelector('.xterm-cursor')),
@@ -56,8 +56,8 @@ async function waitForLogin(page, checkInput = false) {
     assert.equal(stage.frames[0].cursor, false);
     assert.doesNotMatch(stage.frames[0].text, /guest@chasefarrant\.com:~\$/);
   }
-  assert.doesNotMatch(art.frames[0].text, /Heyo|Start with ls\./);
-  assert.match(welcome.frames[0].text, /Heyo[\s\S]*Start with ls\./);
+  assert.doesNotMatch(art.frames[0].text, /Heyo|Start with ls or help\./);
+  assert.match(welcome.frames[0].text, /Heyo[\s\S]*Start with ls or help\./);
   assert.doesNotMatch(await page.locator('.xterm-rows').innerText(), /x: (not found|command not found)/);
 }
 async function waitPrompt(page) {
@@ -110,6 +110,8 @@ async function expectTerminalTab(page, label, target) {
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try {
+    await require('./startup.browser.cjs')(browser, url, { width: 1280, height: 900 });
+    console.log('Startup checks passed: first paint, reload, section links, blocked modules, and no-JS browsing.');
     const errors = [];
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     page.on('pageerror', error => errors.push(error.message));
@@ -167,7 +169,7 @@ async function expectTerminalTab(page, label, target) {
     await page.locator('.boot-line[data-kind="easter-egg"]').waitFor();
     await waitForLogin(page, true);
     const greeting = await page.locator('.xterm-rows').innerText();
-    assert.match(greeting, /Start with ls\./);
+    assert.match(greeting, /Start with ls or help\./);
     const firstEgg = await page.locator('.boot-line[data-kind="easter-egg"]').textContent();
     assert.doesNotMatch(greeting, /projects\/|about\/|career\/|contact\/|notes\//);
     assert.equal(await page.locator('#boot-screen').isVisible(), false);
@@ -207,8 +209,10 @@ async function expectTerminalTab(page, label, target) {
     assert.match(await page.locator('.xterm-rows').innerText(), /uid=1000\(guest\)/);
     await command(page, "printf 'pear\\napple\\npear\\n' | sort | uniq -c", '2 pear');
     await command(page, 'cat projects/website/readme.txt', 'v86');
-    // The heading can scroll out of view before a fast guest finishes printing.
-    await command(page, 'help', 'For the résumé PDF, the top bar also offers Download PDF.');
+    // Wait for the final help entry before continuing.
+    await command(page, 'clear; help', 'Command options');
+    await waitPrompt(page);
+    await page.screenshot({ path: '/tmp/chase-vm-help.png' });
     await require('./games.browser.cjs')(page);
     await command(page, 'open contact/github.url');
     await page.locator('#open-link').waitFor({ state: 'visible' });
@@ -308,7 +312,7 @@ async function expectTerminalTab(page, label, target) {
     await command(page, 'echo OUTPUT_RECOVERED', 'OUTPUT_RECOVERED');
     await page.keyboard.press('Shift+Tab');
     assert.equal(await page.locator('.xterm-helper-textarea').evaluate(element => element === document.activeElement), false);
-    await command(page, 'clear; welcome', 'Start with ls.');
+    await command(page, 'clear; welcome', 'Start with ls or help.');
     await waitPrompt(page);
     await page.screenshot({ path: '/tmp/chase-vm-terminal.png' });
     await page.locator('[data-view="browse"]').click();
@@ -364,6 +368,9 @@ async function expectTerminalTab(page, label, target) {
     await waitForLogin(mobile);
     await mobile.screenshot({ path: '/tmp/chase-vm-welcome-mobile.png' });
     await command(mobile, 'stty -echo');
+    await command(mobile, 'clear; help', 'Command options');
+    await waitPrompt(mobile);
+    await mobile.screenshot({ path: '/tmp/chase-vm-help-mobile.png' });
     await command(mobile, 'pwd', '/home/guest');
     await command(mobile, 'echo MOBILE_WORKS', 'MOBILE_WORKS');
     await mobile.setViewportSize({ width: 320, height: 640 });

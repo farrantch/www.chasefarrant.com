@@ -13,7 +13,7 @@ test('login output reveals art, welcome text, and the native prompt in separate 
   const { createLoginBuffer } = await import('../site/js/login-buffer.mjs');
   const buffer = createLoginBuffer();
   const art = '\x1b[?25l\x1b[32mcf>\x1b[0m\r\n';
-  const welcome = "Heyo, I'm Chase.\r\nStart with ls.\r\n";
+  const welcome = "Heyo, I'm Chase.\r\nStart with ls or help.\r\n";
   const prompt = '\x1b[?25hguest@chasefarrant.com:~$ ';
   // A fast VM can send the entire login before either pause finishes.
   assert.equal(decoder.decode(feed(buffer, encoder.encode(art + artMarker + welcome + readyMarker + prompt))), art + artMarker);

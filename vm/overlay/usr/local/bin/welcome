@@ -34,4 +34,4 @@ printf '\033[0m\n\033]777;art\007'
 cat <<'INTRO' | fold -s -w "$width" | sed 's/^/  /'
 Heyo, I'm Chase. I work in automation, cloud infrastructure, backend software development, and apparently vibecoding now. This is a collection of my work and side projects, from code and electronics to home renovation and tinkering around the farm.
 INTRO
-printf '\n  Start with \033[32mls\033[0m.\n\n'
+printf '\n  Start with \033[32mls\033[0m or \033[32mhelp\033[0m.\n\n'
