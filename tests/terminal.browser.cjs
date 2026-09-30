@@ -185,7 +185,8 @@ async function expectTerminalTab(page, label, target) {
     assert.match(await page.locator('.xterm-rows').innerText(), /uid=1000\(guest\)/);
     await command(page, "printf 'pear\\napple\\npear\\n' | sort | uniq -c", '2 pear');
     await command(page, 'cat projects/website/readme.txt', 'v86');
-    await command(page, 'help', 'Getting around');
+    // The heading can scroll out of view before a fast guest finishes printing.
+    await command(page, 'help', 'For the résumé PDF, the top bar also offers Download PDF.');
     await require('./games.browser.cjs')(page);
     await command(page, 'open contact/github.url');
     await page.locator('#open-link').waitFor({ state: 'visible' });
