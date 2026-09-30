@@ -181,15 +181,17 @@ The guest home contains six sections:
 
 ```text
 /home/guest/
-  about/readme.txt
+  about/
+    intro.txt                 Introduction and technical focus
+    hobbies.txt               Life outside work
   projects/
-    readme.txt                 Project index, grouped by topic
-    website/readme.txt        Short overview, status, tools, and links
-    website/article.txt       Full writeup, when available
-    website/page.url          Browser link
+    www.chasefarrant.com/
+      readme.txt              Short overview, status, tools, and links
+      article.txt             Full writeup, when available
+      page.url                Project page
+      github.url              Public source repository, when available
     ...
   career/
-    overview.txt              Career overview
     2022_veritone/
       role.txt
       work.txt
@@ -198,11 +200,11 @@ The guest home contains six sections:
       role.txt
       work.txt
       tools.txt
-    2017_balanceinnovations->brinks/
+    2017_balanceinnovations-brinks/
       role.txt
       work.txt
       tools.txt
-    2014_billsoft->eztax->avalara/
+    2014_billsoft-eztax-avalara/
       role.txt
       work.txt
       tools.txt
@@ -215,18 +217,20 @@ The guest home contains six sections:
       work.txt
       tools.txt
   notes/
-    readme.txt
-    cloudformation/readme.txt
-    cloudformation/article.txt
-    cloudformation/page.url
-    ...
+    2023-02-23_cloudformation/
+      readme.txt
+      article.txt
+      page.url
+    2023-12-06_startup-infrastructure/
+      readme.txt
+      article.txt
+      page.url
   contact/
-    readme.txt
     email.url
     github.url
     linkedin.url
     meeting.url
-    resume.url                Shortcut to the published résumé
+    resume.url                Public HTTPS URL of the résumé
   documents/
     ChaseFarrant-Resume.pdf    The actual résumé PDF
 ```
@@ -238,32 +242,39 @@ Every employer directory contains the same three files:
   or position. Avalara's two positions retain their separate dates.
 - `tools.txt`: the technical stack.
 
-`less ~/career/overview.txt` shows the overall timeline. Start-year prefixes
-sort the employer directories chronologically. Directory names come from the
-`directory` field in `site/_data/career.json`. Quote names containing `>` so the
-shell treats the arrows as part of the name:
+Start-year prefixes sort the employer directories chronologically. Directory
+names come from the `directory` field in `site/_data/career.json`. Dashes
+separate company names after acquisitions or renames:
 
 ```sh
-cd ~/career/'2014_billsoft->eztax->avalara'
+cd ~/career/2014_billsoft-eztax-avalara
 cat role.txt
 less work.txt
 cat tools.txt
 ```
 
 The Browse view uses the same complete career content as the terminal.
-`open ~/documents/ChaseFarrant-Resume.pdf` prints a link to preview the résumé
-and offers **Download PDF** in the top bar. Both require a click. The Browse
-contact section also has a direct download link. The guest contains the actual
-PDF bytes, built from `site/ChaseFarrant-Resume.pdf`, which is also the published
-browser copy. Replace that source file and rebuild to update both copies.
-`contact/resume.url` is a shortcut to the same PDF. Project and note
-summaries lead to longer articles and links. Prose wraps at 72 columns; code retains its formatting.
+`open ~/documents/ChaseFarrant-Resume.pdf` and `open ~/contact/resume.url` both
+print the public URL `https://www.chasefarrant.com/ChaseFarrant-Resume.pdf`.
+Click the terminal link to open it, or use the link in the top bar. On the
+production origin, the top bar offers **Download PDF**; local previews link
+to the public copy. The Browse contact section also has a direct download link.
+The guest contains the actual PDF bytes, built from `site/ChaseFarrant-Resume.pdf`,
+which is also the published browser copy. Replace that source file and rebuild
+to update both copies.
+
+Project summaries include `open ~/projects/<slug>/github.url` when a public
+repository is available. `page.url` opens the project writeup or other public
+project page. Private repositories do not get public GitHub shortcuts. Note
+directories use `YYYY-MM-DD_<slug>`, with the date taken from the article's
+frontmatter. Each note retains its own overview, article, and browser link.
+Prose wraps at 72 columns; code retains its formatting.
 Article links are collected at the end so URLs do not interrupt the paragraphs.
 Use `less` for long files. The generated files belong to the guest account.
 
 Project directories come from the explicit `slug` in `site/_data/catalog.json`.
 Add the title, description, highlights, category, materials, year, status, and
-optional URL there. Internal project URLs also include their Markdown article
+optional `url` and public `repository` URL there. Internal project URLs also include their Markdown article
 as `article.txt`. The project index and Browse view use the same records.
 
 `site/_data/notes.json` lists the articles included in the guest, with a short
@@ -427,3 +438,16 @@ vulnerabilities after the update. Both CI systems rerun the audit and stop on
 moderate or higher findings. See [the release guide](../docs/releasing.md) for
 build validation, browser coverage, caching, and rollback. Dependency auditing
 does not assess the vendored guest kernel or certify browser isolation.
+
+## Browser compatibility
+
+The bundled v86 scheduler keeps its worker blob URL until the scheduler is
+disposed. This avoids a WebKit startup race caused by revoking the URL before
+the worker loads. `scripts/build-vm.cjs` applies an exact patch to the pinned
+v86 version and fails if an upgrade changes the affected code. Browser checks
+cover boot and reboot after opening an external link.
+
+The terminal also invalidates xterm 6.0's cached link targets when output changes
+while no link is hovered. This uses pinned-version internals to prevent a click
+from opening an older URL at the same screen position. Browser checks click each
+public project link in sequence; review this workaround when upgrading xterm.

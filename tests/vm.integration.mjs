@@ -6,6 +6,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { V86 } from 'v86';
 import buildVM from '../scripts/build-vm.cjs';
+import portfolio from '../site/_lib/portfolio.cjs';
+
+const content = portfolio();
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const output = mkdtempSync(path.join(tmpdir(), 'portfolio-vm-test-'));
@@ -43,10 +46,10 @@ try {
   await run('test "$(hostname)" = chasefarrant.com && test "$(hostname -f)" = chasefarrant.com');
   assert.match(await run('stty size'), /35 153/);
   assert.match(await run('uname -s; id; pwd'), /Linux[\s\S]*uid=1000\(guest\)[\s\S]*\/home\/guest/);
-  assert.match(await run('cat projects/website/readme.txt; cat career/overview.txt'), /chasefarrant.com[\s\S]*Veritone/);
+  assert.match(await run('cat projects/www.chasefarrant.com/readme.txt; cat career/2022_veritone/role.txt'), /chasefarrant.com[\s\S]*Veritone/);
   assert.match(await run("printf 'pear\\napple\\npear\\n' | sort | uniq -c | awk '{print $2 \":\" $1}'"), /apple:1[\s\S]*pear:2/);
   await run("mkdir sandbox; printf '#!/bin/sh\\nprintf SCRIPT_OK\\n' > sandbox/run; chmod +x sandbox/run; sandbox/run | grep SCRIPT_OK");
-  await run("cp about/readme.txt sandbox/copy; ln -s copy sandbox/link; cmp sandbox/link about/readme.txt; find sandbox -type f | grep copy");
+  await run("cp about/intro.txt sandbox/copy; ln -s copy sandbox/link; cmp sandbox/link about/intro.txt; find sandbox -type f | grep copy");
   await run('grep -ri cloud projects | head -n 3; tree -L 1; vi --help >/dev/null 2>&1; command -v less');
   assert.match(await run('help'), /Navigation[\s\S]*Portfolio[\s\S]*Reference/);
   await run('help > /tmp/help.txt; cmp /tmp/help.txt /usr/local/share/portfolio/help.txt');
@@ -58,17 +61,18 @@ try {
   assert(helpText.split('\r\n').every(line => line.length <= 40), helpText);
   assert.match(await run('cd /tmp; help keys; help session; commands; cd ~'), /Clipboard[\s\S]*No network access[\s\S]*Tools by task/);
   await run('test ! -e readme.txt && test ! -e employment && test ! -e about.txt && test ! -e projects/index.txt && test ! -e notes/index.txt');
-  await run('for section in about projects notes contact; do test -s "$section/readme.txt" || exit 1; done');
-  assert.match(await run("cat ~/career/'2014_billsoft->eztax->avalara'/role.txt"), /BillSoft \/ EZTax \/ Avalara/);
-  assert.match(await run("cat ~/career/'2017_balanceinnovations->brinks'/work.txt"), /Balance Innovations/);
-  const careerOverview = await run('cat career/overview.txt');
-  const careerCommands = [...careerOverview.matchAll(/Explore: ls ([^\r\n]+)/g)];
-  assert.equal(careerCommands.length, 6);
-  for (const [, directory] of careerCommands) {
+  await run('for file in about/readme.txt career/overview.txt contact/readme.txt notes/readme.txt projects/readme.txt; do test ! -e "$file" || exit 1; done');
+  await run('test -s about/intro.txt && test -s about/hobbies.txt');
+  assert.match(await run('cat about/hobbies.txt'), /skiing[\s\S]*Catch\s+Amy/);
+  assert.match(await run('cat /secrets.txt'), /If you want to keep a secret, you must also hide it from yourself\.[\s\S]*George Orwell, 1984/);
+  assert.match(await run("cat ~/career/2014_billsoft-eztax-avalara/role.txt"), /BillSoft \/ EZTax \/ Avalara/);
+  assert.match(await run("cat ~/career/2017_balanceinnovations-brinks/work.txt"), /Balance Innovations/);
+  for (const role of content.career.roles) {
+    const directory = `career/${role.directory}/`;
     await run(`test -d ${directory} && test -s ${directory}role.txt && test -s ${directory}work.txt && test -s ${directory}tools.txt && cat ${directory}*.txt >/dev/null`);
   }
   await run('test ! -e career/readme.txt && test ! -e career/avalara.txt && test ! -e career/balance-innovations.txt');
-  assert.match(await run('cat notes/cloudformation/readme.txt'), /Working with CloudFormation/);
+  assert.match(await run('cat notes/2023-02-23_cloudformation/readme.txt'), /Working with CloudFormation/);
   for (const tool of 'ls pwd tree find cp mv rm mkdir ln chmod cat less head tail grep sort uniq wc cut sed awk nano vi joe ed tar gzip gunzip unzip ps top kill sleep uname hostname id date uptime free df du sh lua curl ping wget links'.split(' ')) {
     await run(`command -v ${tool} >/dev/null`);
   }
@@ -92,13 +96,20 @@ try {
   const httpsProbe = await run('curl --proto \"=https\" --connect-timeout 1 https://127.0.0.1:1 2>&1; test \"$?\" -eq 7');
   assert.doesNotMatch(httpsProbe, /unrecognized protocol|not supported/);
   await run('test -s contact/resume.url && test ! -e career/resume.url && test ! -e documents/resume.url');
-  assert.match(await run('open contact/resume.url'), /ChaseFarrant-Resume\.pdf/);
+  assert((await run('open contact/resume.url')).includes(content.resumeURL));
   const resumeHash = createHash('sha256').update(readFileSync(path.join(root, 'site/ChaseFarrant-Resume.pdf'))).digest('hex');
   assert.match(await run('sha256sum documents/ChaseFarrant-Resume.pdf'), new RegExp(resumeHash));
-  assert.match(await run('open ~/documents/ChaseFarrant-Resume.pdf'), /Open in browser: [\s\S]*ChaseFarrant-Resume\.pdf/);
-  assert.match(await run('cd documents; open ./ChaseFarrant-Resume.pdf; cd ~'), /ChaseFarrant-Resume\.pdf/);
-  assert.match(await run('ln -s ~/documents/ChaseFarrant-Resume.pdf /tmp/resume.pdf; open /tmp/resume.pdf'), /ChaseFarrant-Resume\.pdf/);
+  assert((await run('open ~/documents/ChaseFarrant-Resume.pdf')).includes(content.resumeURL));
+  assert((await run('cd documents; open ./ChaseFarrant-Resume.pdf; cd ~')).includes(content.resumeURL));
+  assert((await run('ln -s ~/documents/ChaseFarrant-Resume.pdf /tmp/resume.pdf; open /tmp/resume.pdf')).includes(content.resumeURL));
   assert.match(await run('open contact/github.url'), /\x1b\]777;open=/);
+  for (const project of content.projects.filter(project => project.repository)) {
+    const result = await run(`open projects/${project.slug}/github.url`);
+    const message = result.match(/\x1b\]777;open=([^\x07]+)\x07/);
+    assert(message, `Browser link for ${project.slug}`);
+    assert.equal(Buffer.from(message[1], 'base64').toString(), project.repository);
+    assert(result.includes(project.repository));
+  }
   const rebootHelp = await run('reboot --help');
   assert.match(rebootHelp, /All session files are discarded/);
   assert.doesNotMatch(rebootHelp, /\x1b\]777;reboot\x07/);

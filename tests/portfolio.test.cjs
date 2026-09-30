@@ -20,7 +20,13 @@ test('portfolio text is readable and every suggested home path exists', () => {
   assert(!files.has('home/guest/career/resume.url'));
   assert(!files.has('home/guest/documents/resume.url'));
   assert(!files.has('home/guest/readme.txt'));
-  assert(files.has('home/guest/career/overview.txt'));
+  for (const name of ['about/readme.txt', 'career/overview.txt', 'contact/readme.txt', 'notes/readme.txt', 'projects/readme.txt']) {
+    assert(!files.has(`home/guest/${name}`), `${name} was removed`);
+  }
+  assert(files.has('home/guest/about/intro.txt'));
+  assert(files.has('home/guest/about/hobbies.txt'));
+  assert.equal(content.resumeURL, 'https://www.chasefarrant.com/ChaseFarrant-Resume.pdf');
+  assert.equal(files.get('usr/local/share/portfolio/resume.url').text.trim(), content.resumeURL);
   assert(!files.has('home/guest/career/readme.txt'));
   assert(!content.files.some(file => file.path.startsWith('home/guest/employment/')));
   assert(!files.has('home/guest/about.txt'));
@@ -40,8 +46,10 @@ test('the curated portfolio excludes duplicate and unfinished drafts', () => {
     assert(project.description && project.highlights.length && project.slug);
   }
   for (const note of content.notes) {
-    assert(content.files.some(file => file.path === `home/guest/notes/${note.slug}/article.txt`));
-    assert(content.files.some(file => file.path === `home/guest/notes/${note.slug}/page.url` && file.text.trim() === note.url));
+    assert.equal(note.directory, `${note.article.date}_${note.slug}`);
+    assert.match(note.directory, /^\d{4}-\d{2}-\d{2}_[a-z0-9-]+$/);
+    assert(content.files.some(file => file.path === `home/guest/notes/${note.directory}/article.txt`));
+    assert(content.files.some(file => file.path === `home/guest/notes/${note.directory}/page.url` && file.text.trim() === note.url));
   }
 });
 

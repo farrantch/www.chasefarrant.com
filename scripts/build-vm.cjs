@@ -30,7 +30,20 @@ function buildVM(output = path.join(root, 'site/_site')) {
     'XTERM-LICENSE.txt': '@xterm/xterm/LICENSE'
   };
   for (const [name, source] of Object.entries(vendor)) payload.set(name, fs.readFileSync(path.join(root, 'node_modules', source)));
-  for (const name of ['initial-view.js', 'vm-terminal.js', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs']) {
+  // v86 0.5.462 revokes its scheduler worker URL before WebKit loads it.
+  // Keep that URL until the scheduler is disposed. These exact matches also
+  // force a review of the workaround when the pinned emulator is upgraded.
+  let emulator = payload.get('libv86.mjs').toString();
+  for (const [before, after] of [
+    ['URL.revokeObjectURL(b)};G.prototype.yield=', 'this.worker_blob_url=b};G.prototype.yield='],
+    ['this.worker&&this.worker.terminate();this.worker=null',
+      'this.worker&&this.worker.terminate();if(this.worker_blob_url)URL.revokeObjectURL(this.worker_blob_url);this.worker_blob_url=null;this.worker=null']
+  ]) {
+    if (emulator.split(before).length !== 2) throw new Error('Review the v86 worker URL lifetime patch for this version');
+    emulator = emulator.replace(before, after);
+  }
+  payload.set('libv86.mjs', Buffer.from(emulator));
+  for (const name of ['initial-view.js', 'vm-terminal.js', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs', 'touch-scroll.mjs']) {
     payload.set(name, fs.readFileSync(path.join(root, 'site/js', name)));
   }
   payload.set('terminal.css', fs.readFileSync(path.join(root, 'site/css/terminal.css')));
