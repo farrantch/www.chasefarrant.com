@@ -1,5 +1,5 @@
 {
-  "name": "chasefarrant.com",
+  "name": "www.chasefarrant.com",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -16,15 +16,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/farrantch/chasefarrant.com.git"
+    "url": "git+https://github.com/farrantch/www.chasefarrant.com.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/farrantch/chasefarrant.com/issues"
+    "url": "https://github.com/farrantch/www.chasefarrant.com/issues"
   },
-  "homepage": "https://github.com/farrantch/chasefarrant.com#readme",
+  "homepage": "https://github.com/farrantch/www.chasefarrant.com#readme",
   "devDependencies": {
     "@11ty/eleventy": "3.1.6",
     "luxon": "3.7.2",

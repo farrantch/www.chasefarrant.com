@@ -1,8 +1,8 @@
-chasefarrant.com browser Linux image
+www.chasefarrant.com browser Linux image
 
 All assets are served locally. Exact binary hashes and download locations
 are recorded in vm/assets.json in the website source repository:
-https://github.com/farrantch/chasefarrant.com
+https://github.com/farrantch/www.chasefarrant.com
 
 v86 0.5.462 (5f9a90f), BSD-2-Clause:
 https://github.com/copy/v86

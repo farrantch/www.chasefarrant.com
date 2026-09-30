@@ -90,6 +90,11 @@ validation passes; `cfn-lint` reports only the existing legacy-ACL warnings.
 Migrating these website origins to private S3 access is a separate infrastructure
 change. No live AWS settings were changed during these checks.
 
+The repository is now `farrantch/www.chasefarrant.com`. Its existing pipeline
+source was updated to that name without starting a deployment. The matching
+`GitHubRepoName` value in `aws-codepipeline/envs/prod.template` reconciles the
+CloudFormation parameter when the release PR is merged.
+
 ## Hosted checks
 
 After deployment, this read-only check verifies every release URL, MIME type,

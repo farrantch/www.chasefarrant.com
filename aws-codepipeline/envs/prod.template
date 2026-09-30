@@ -2,7 +2,7 @@
     "Parameters": {
         "Environment": "prod",
         "GitHubRepoBranch": "main",
-        "GitHubRepoName": "chasefarrant.com",
+        "GitHubRepoName": "www.chasefarrant.com",
         "GitHubRepoOwner": "farrantch",
         "Prefix": "cf",
         "ServiceName": "portfolio"

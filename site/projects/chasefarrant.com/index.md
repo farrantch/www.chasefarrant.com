@@ -5,13 +5,13 @@ tags:
   - projects
   - 11ty
   - eleventy
-title: chasefarrant.com
+title: www.chasefarrant.com
 ---
 
 # {{ title }}
 _Created on {{ page.date | asPostDate }}_
 
-#### GitHub Source <a href="https://github.com/farrantch/chasefarrant.com" target="_blank" style="text-decoration:none">&#11016;</a>
+#### GitHub Source <a href="https://github.com/farrantch/www.chasefarrant.com" target="_blank" style="text-decoration:none">&#11016;</a>
 
 &nbsp;
 ## Explore the portfolio in Linux
@@ -27,7 +27,7 @@ The VM has a temporary writable filesystem and runs without a guest network
 connection. The entire site is still served as
 static files through the AWS pipeline below.
 
-[Image customization and security notes](https://github.com/farrantch/chasefarrant.com/blob/master/vm/README.md)
+[Image customization and security notes](https://github.com/farrantch/www.chasefarrant.com/blob/main/vm/README.md)
 
 ## Original site design
 Confession time... &nbsp; _I kinda loathe front-end web development._  &nbsp; Because of this, I have a huge soft spot for minimalist websites that convey information cleanly and concisely. Some famous examples include:

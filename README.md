@@ -1,8 +1,8 @@
-# chasefarrant.com
+# www.chasefarrant.com
 
-[![Build](https://github.com/farrantch/chasefarrant.com/actions/workflows/build.yaml/badge.svg)](https://github.com/farrantch/chasefarrant.com/actions/workflows/build.yaml)
+[![Build](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml/badge.svg)](https://github.com/farrantch/www.chasefarrant.com/actions/workflows/build.yaml)
 
-The source for [chasefarrant.com](https://www.chasefarrant.com), a deliberately small engineering site built with Eleventy and deployed through an infrastructure-as-code pipeline on AWS.
+The source for [www.chasefarrant.com](https://www.chasefarrant.com), a deliberately small engineering site built with Eleventy and deployed through an infrastructure-as-code pipeline on AWS.
 
 The portfolio can be explored through a real Linux VM running in the browser or through ordinary links. Eleventy generates both views from the same content. Build validation, pipeline updates, infrastructure deployment, artifact sync, and CloudFront invalidation are represented as code.
 
