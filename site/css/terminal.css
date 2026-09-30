@@ -331,6 +331,31 @@ h1, h2, h3 { font-weight: 400; color: var(--bright); }
 }
 
 
+.site-footer {
+  padding: 12px clamp(16px, 2vw, 28px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.site-credit {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 8px;
+  margin: 0;
+}
+
+.site-credit a {
+  color: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.site-credit a:hover, .site-credit a:focus-visible { text-decoration: underline; }
+
 @media (max-width: 1050px) {
   .wordmark-name { display: none; }
 }

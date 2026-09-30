@@ -50,14 +50,23 @@ test('every catalog project and article has a real guest directory; helpers are 
   for (const project of content.projects) {
     assert(files.has(`home/guest/projects/${project.slug}/readme.txt`));
     if (project.url) assert.equal(files.get(`home/guest/projects/${project.slug}/page.url`).data.toString().trim(), project.url);
+    if (project.repository) {
+      assert.equal(files.get(`home/guest/projects/${project.slug}/github.url`).data.toString().trim(), project.repository);
+      assert.match(project.repository, /^https:\/\/github\.com\/farrantch\/[^/]+$/);
+    }
+    if (['propertunity', 'homelab'].includes(project.slug)) {
+      assert(!files.has(`home/guest/projects/${project.slug}/page.url`), 'Private repositories are not advertised as public links');
+    }
   }
-  for (const name of ['about', 'contact']) assert(files.has(`home/guest/${name}/readme.txt`));
+  for (const name of ['intro', 'hobbies']) assert(files.has(`home/guest/about/${name}.txt`));
+  assert.equal(files.get('secrets.txt').data.toString(), '"If you want to keep a secret, you must also hide it from yourself."\n\n- George Orwell, 1984\n');
   const resume = files.get('home/guest/documents/ChaseFarrant-Resume.pdf');
   assert.equal(resume.uid, 1000);
   assert.equal(resume.mode, 0o100644);
   assert.deepEqual(resume.data, readFileSync(path.resolve(__dirname, '../site/ChaseFarrant-Resume.pdf')));
   assert.equal(resume.data.subarray(0, 5).toString(), '%PDF-');
   for (const role of content.career.roles) {
+    assert.match(role.directory, /^\d{4}_[a-z0-9-]+$/);
     const directory = `home/guest/career/${role.directory}`;
     assert.equal(files.get(directory).mode, 0o40755);
     assert(!files.has(`${directory}.txt`), 'old combined files are replaced by employer directories');

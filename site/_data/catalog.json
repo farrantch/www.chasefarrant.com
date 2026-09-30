@@ -1,29 +1,6 @@
 [
   {
     "index": "001",
-    "title": "OpenPowerWheels",
-    "description": "A modular controller for electric ride-on toys, designed to adapt as kids grow.",
-    "year": "2024",
-    "status": "Prototype",
-    "category": "electronics",
-    "categoryLabel": "Electronics",
-    "materials": [
-      "ESP32",
-      "C++",
-      "motors",
-      "controls"
-    ],
-    "url": "/projects/openpowerwheels/",
-    "visual": "circuit",
-    "slug": "openpowerwheels",
-    "highlights": [
-      "Separate motor control, pedals, and remote inputs so each can change independently.",
-      "Explore support for different motors and pedal types without replacing the whole controller.",
-      "Built around an ESP32 and C++."
-    ]
-  },
-  {
-    "index": "002",
     "title": "www.chasefarrant.com",
     "description": "A portfolio inside a browser-based Linux terminal, with a conventional Browse view.",
     "year": "2024",
@@ -38,15 +15,16 @@
     ],
     "url": "/projects/chasefarrant.com/",
     "visual": "pipeline",
-    "slug": "website",
+    "slug": "www.chasefarrant.com",
     "highlights": [
       "Linux runs locally through v86, with xterm.js handling the terminal.",
       "Project records supply both the guest files and the Browse view.",
       "Eleventy builds the site; an AWS pipeline publishes static files to S3 and CloudFront."
-    ]
+    ],
+    "repository": "https://github.com/farrantch/www.chasefarrant.com"
   },
   {
-    "index": "003",
+    "index": "002",
     "title": "Finishing an unfinished basement",
     "description": "Turning an unfinished basement into living space, from planning and framing to wiring and drywall.",
     "year": "2021",
@@ -71,6 +49,30 @@
     ]
   },
   {
+    "index": "003",
+    "title": "Cap To Talk",
+    "description": "Caps Lock dictation for Linux/X11, with local transcription and optional cleanup before inserting text.",
+    "year": "2026",
+    "status": "Alpha",
+    "category": "software",
+    "categoryLabel": "Software",
+    "materials": [
+      "Python",
+      "X11",
+      "OpenASR",
+      "Ollama"
+    ],
+    "url": "/projects/cap-to-talk/",
+    "visual": "audio",
+    "slug": "cap-to-talk",
+    "highlights": [
+      "Hold Caps Lock to record, then insert the transcription into the original window.",
+      "Run OpenASR and optional Ollama cleanup locally, with a raw transcription mode.",
+      "Use personal vocabulary hints, a spelling glossary, and a setup health check."
+    ],
+    "repository": "https://github.com/farrantch/cap-to-talk"
+  },
+  {
     "index": "004",
     "title": "Propertunity",
     "description": "Property listing history, maps, and investment comparisons in one application.",
@@ -84,8 +86,6 @@
       "PostGIS",
       "MapLibre"
     ],
-    "url": "https://github.com/farrantch/propertunity",
-    "external": true,
     "visual": "map",
     "slug": "propertunity",
     "highlights": [
@@ -96,25 +96,27 @@
   },
   {
     "index": "005",
-    "title": "Disk Analyzer",
-    "description": "An offline workflow for inspecting disk images and producing searchable recovery reports.",
+    "title": "Cold Digger",
+    "description": "Offline disk-image recovery for crypto wallets, deleted files, browser history, and media.",
     "year": "2026",
-    "status": "Working",
+    "status": "Alpha",
     "category": "software",
     "categoryLabel": "Software",
     "materials": [
       "Python",
       "Sleuth Kit",
       "PhotoRec",
-      "HTML"
+      "SQLite"
     ],
     "visual": "disk",
-    "slug": "disk-analyzer",
+    "slug": "cold-digger",
     "highlights": [
-      "Bring forensic tools into a repeatable analysis workflow.",
-      "Use Sleuth Kit and PhotoRec to examine disk images and recover files.",
-      "Produce HTML reports while keeping the raw media local."
-    ]
+      "Scan raw disk images locally without modifying the source.",
+      "Recover files and investigate wallet material with source locations and coverage records.",
+      "Resume scans and review results in searchable offline reports, a file explorer, and a media gallery."
+    ],
+    "url": "/projects/cold-digger/",
+    "repository": "https://github.com/farrantch/cold-digger"
   },
   {
     "index": "006",
@@ -130,8 +132,6 @@
       "TrueNAS",
       "Docker"
     ],
-    "url": "https://github.com/farrantch/homelab",
-    "external": true,
     "visual": "network",
     "slug": "homelab",
     "highlights": [
@@ -142,28 +142,6 @@
   },
   {
     "index": "007",
-    "title": "Favicon Generator",
-    "description": "A browser tool for editing an image and exporting a favicon package.",
-    "year": "2026",
-    "status": "Complete",
-    "category": "software",
-    "categoryLabel": "Software",
-    "materials": [
-      "JavaScript",
-      "Canvas",
-      "SVG",
-      "ZIP"
-    ],
-    "visual": "icons",
-    "slug": "favicon-generator",
-    "highlights": [
-      "Edit and preview the source image locally in the browser.",
-      "Use Canvas and SVG for image processing and previews.",
-      "Package the generated formats in a ZIP download."
-    ]
-  },
-  {
-    "index": "008",
     "title": "Catch Amy recordings",
     "description": "Recordings from Catch Amy, the band I played guitar in during college.",
     "year": "2012",

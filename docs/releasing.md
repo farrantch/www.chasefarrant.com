@@ -124,9 +124,10 @@ Terminal code, CSS, emulator files, and the guest image share a content-derived
 `/vm/<hash>/` directory. These assets, generated images, and versioned fonts use
 `public, max-age=31536000, immutable`. HTML, the VM manifest, résumé, and other
 fixed URLs use `no-cache, max-age=0, must-revalidate`. Uploads explicitly set MIME
-types, including JavaScript modules, WebAssembly, and PDF. Résumé links include a
-content hash to bypass copies cached under the former one-year policy. A browser
-with an old homepage still cached may need one hard refresh.
+types, including JavaScript modules, WebAssembly, and PDF. Résumé links use the
+public URL https://www.chasefarrant.com/ChaseFarrant-Resume.pdf. A browser with an
+old homepage or PDF still cached under the former one-year policy may need one
+hard refresh.
 
 ```sh
 npm run check:hosted -- https://www.chasefarrant.com EXPECTED_RELEASE_ID

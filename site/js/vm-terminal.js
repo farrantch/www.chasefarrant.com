@@ -1,5 +1,6 @@
 import { safeLink, bridgeMessage } from './vm-bridge.mjs';
 import { createLoginBuffer } from './login-buffer.mjs';
+import { attachTouchScroll } from './touch-scroll.mjs';
 import { createBootSequence, createShutdownSequence, advanceBoot } from './boot-sequence.mjs';
 
 const $ = selector => document.querySelector(selector);
@@ -304,6 +305,18 @@ async function start() {
     term.loadAddon(fit);
     term.loadAddon(new WebLinksAddon(activateLink));
     term.open($('#terminal-screen'));
+    attachTouchScroll(term, current.abort.signal);
+    // xterm 6.0 stops invalidating its row-link cache when the pointer leaves a
+    // link. After off-hover output changes, the next click can open an old URL.
+    // This uses pinned-version internals; the browser tests cover repeated links
+    // at the same screen position so an xterm upgrade can retire the workaround.
+    term.onRender(() => {
+      const linkifier = term._core.linkifier;
+      if (!linkifier.currentLink) {
+        linkifier._activeLine = -1;
+        linkifier._lastBufferCell = undefined;
+      }
+    });
     term.attachCustomKeyEventHandler(event => {
       if (event.key === 'Tab' && event.shiftKey) return false;
       const key = event.key.toLowerCase();

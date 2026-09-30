@@ -863,6 +863,17 @@ button:focus-visible {
   margin: 0;
 }
 
+.site-footer .site-credit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.site-credit a { white-space: nowrap; }
+
 .site-footer p:last-child {
   display: flex;
   gap: 10px;

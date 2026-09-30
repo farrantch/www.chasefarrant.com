@@ -1,6 +1,5 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { createHash } = require('node:crypto');
 const { terminalText } = require('./terminal-text.cjs');
 const site = path.resolve(__dirname, '..');
 const data = name => JSON.parse(fs.readFileSync(path.join(site, '_data', name + '.json'), 'utf8'));
@@ -28,13 +27,17 @@ module.exports = function portfolio() {
   const career = data('career');
   const resumeName = path.posix.basename(career.source);
   const resumeData = fs.readFileSync(path.join(site, career.source.slice(1)));
-  const resumeURL = `${career.source}?v=${createHash('sha256').update(resumeData).digest('hex').slice(0, 12)}`;
+  const resumeURL = new URL(career.source, 'https://www.chasefarrant.com').href;
   const profile = data('profile');
-  const notes = data('notes').map(note => ({
-    ...note,
-    article: readArticle(note.source),
-    url: '/' + note.source.replace(/index\.md$/, '')
-  }));
+  const notes = data('notes').map(note => {
+    const article = readArticle(note.source);
+    return {
+      ...note,
+      article,
+      directory: `${article.date}_${note.slug}`,
+      url: '/' + note.source.replace(/index\.md$/, '')
+    };
+  });
   const about = [...profile.paragraphs, profile.outsideWork].join('\n\n');
   const links = [
     { slug: 'email', title: 'Email', url: 'mailto:hello@chasefarrant.com', label: 'hello@chasefarrant.com' },
@@ -48,39 +51,19 @@ module.exports = function portfolio() {
   const document = (name, markdown, url) => file(name, terminalText(markdown, url));
   const bullets = lines => lines.map(line => '- ' + line).join('\n');
 
-  document('about/readme.txt', `# About Chase
+  document('about/intro.txt', `# About Chase
 
 ${profile.paragraphs.join('\n\n')}
 
 ## What I work on
 
 ${bullets(profile.focus)}
-
-## Outside work
+`);
+  document('about/hobbies.txt', `# Hobbies
 
 ${profile.outsideWork}
-
-## More
-
-- Work history: less ~/career/overview.txt
-- Get in touch: cat ~/contact/readme.txt
 `);
 
-  const categories = ['software', 'infrastructure', 'electronics', 'home', 'music'];
-  const groups = categories.map(category => {
-    const entries = projects.filter(project => project.category === category);
-    return `## ${entries[0].categoryLabel}\n\n` + entries.map(project =>
-      `- ${project.slug}/ — ${project.description}`
-    ).join('\n');
-  });
-  document('projects/readme.txt', `# Projects
-
-${projects.length} projects across software, infrastructure, electronics, home builds, and music.
-
-Each project has a readme.txt with its status, tools, and links to further reading. For example: cat ~/projects/website/readme.txt
-
-${groups.join('\n\n')}
-`);
   for (const project of projects) {
     const directory = `projects/${project.slug}`;
     let article;
@@ -100,26 +83,16 @@ ${bullets(project.highlights)}
 
 Tools / materials: ${project.materials.join(', ')}.
 
-${project.url ? '## Read more\n\n' + bullets([
+${project.url || project.repository ? '## Read more\n\n' + bullets([
   ...(article ? [`Full writeup: less ~/${directory}/article.txt`] : []),
-  `${project.external ? (project.category === 'music' ? 'Listen' : 'Repository') : 'Web page and images'}: open ~/${directory}/page.url`
+  ...(project.url ? [`${project.category === 'music' ? 'Listen' : 'Web page'}: open ~/${directory}/page.url`] : []),
+  ...(project.repository ? [`GitHub source: open ~/${directory}/github.url`] : [])
 ]) : 'A public writeup is not available yet.'}
 `, project.url?.startsWith('/') ? project.url : '/');
     if (project.url) file(`${directory}/page.url`, project.url);
+    if (project.repository) file(`${directory}/github.url`, project.repository);
   }
 
-  document('career/overview.txt', `# Career
-
-${career.note}
-
-Each employer directory has role.txt for context, work.txt for detailed work, and tools.txt for the technical stack.
-
-${career.roles.map(role => `${role.company}  \n${role.title}  \n${role.dates}  \n${role.summary}  \nExplore: ls ~/career/'${role.directory}'/`).join('\n\n')}
-
-## Full résumé
-
-open ~/documents/${resumeName}
-`);
   for (const role of career.roles) {
     const directory = `career/${role.directory}`;
     const sections = role.sections.map(section => `## ${section.heading}
@@ -152,14 +125,8 @@ ${bullets(role.tools)}
 `);
   }
 
-  document('notes/readme.txt', `# Notes
-
-Writing about infrastructure and software design. Each directory has a short overview, the original article, and a link to the web version.
-
-${notes.map(note => `## ${note.title}\n\n${note.article.date}\n\n${note.description}\n\nRead: cat ~/notes/${note.slug}/readme.txt`).join('\n\n')}
-`);
   for (const note of notes) {
-    const directory = `notes/${note.slug}`;
+    const directory = `notes/${note.directory}`;
     document(`${directory}/readme.txt`, `# ${note.title}
 
 Published ${note.article.date}
@@ -179,25 +146,6 @@ ${bullets(note.highlights)}
     file(`${directory}/page.url`, note.url);
   }
 
-  document('contact/readme.txt', `# Contact
-
-Email is the simplest way to reach me about a project or get in touch.
-
-## Email
-
-hello@chasefarrant.com
-
-open ~/contact/email.url
-
-## Elsewhere
-
-- GitHub: github.com/farrantch — open ~/contact/github.url
-- LinkedIn: open ~/contact/linkedin.url
-- Schedule a conversation: open ~/contact/meeting.url
-- Résumé (PDF): open ~/contact/resume.url
-
-The open command prints a clickable link. Click it to open in your browser.
-`);
   files.push({
     path: `home/guest/documents/${resumeName}`,
     data: resumeData,

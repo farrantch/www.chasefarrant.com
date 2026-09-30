@@ -4,6 +4,10 @@ const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
 const path = require('node:path');
 const { chromium } = require('playwright');
+const portfolio = require('../site/_lib/portfolio.cjs')();
+const expectedProjectCount = portfolio.projects.length;
+const expectedPDF = readFileSync(path.join(__dirname, '../site/ChaseFarrant-Resume.pdf'));
+const resumeURL = portfolio.resumeURL;
 const url = process.env.TERMINAL_URL || 'http://127.0.0.1:8080';
 const waitTextInBoot = (page, text) => page.waitForFunction(text => document.querySelector('#boot-log').textContent.includes(text), text);
 const waitReady = page => page.waitForFunction(() => document.querySelector('#vm-status').textContent.includes('connected'), null, { timeout: 95000 });
@@ -145,11 +149,12 @@ async function expectTerminalTab(page, label, target) {
     assert.equal(favicon.status(), 200);
     assert.match(await favicon.text(), /<title>cf&gt;<\/title>/);
 
-    assert.equal(await page.locator('#start-vm, #restart-vm, footer, .session-bar, .terminal-toolbar, .terminal-footer').count(), 0);
+    assert.equal(await page.locator('#start-vm, #restart-vm, .session-bar, .terminal-toolbar, .terminal-footer').count(), 0);
+    assert.equal(await page.locator('.site-credit a').getAttribute('href'), 'https://wiredby.design/');
     await page.screenshot({ path: '/tmp/chase-vm-boot.png' });
     await page.locator('[data-view="browse"]').click();
     assert(await page.locator('#portfolio').isVisible());
-    assert.equal(await page.locator('#projects .project').count(), 8);
+    assert.equal(await page.locator('#projects .project').count(), expectedProjectCount);
     const career = require('../site/_data/career.json');
     assert.equal(await page.locator('#career .role').count(), career.roles.length);
     for (const role of career.roles) {
@@ -208,7 +213,7 @@ async function expectTerminalTab(page, label, target) {
     await command(page, 'uname -s; id; pwd', '/home/guest');
     assert.match(await page.locator('.xterm-rows').innerText(), /uid=1000\(guest\)/);
     await command(page, "printf 'pear\\napple\\npear\\n' | sort | uniq -c", '2 pear');
-    await command(page, 'cat projects/website/readme.txt', 'v86');
+    await command(page, 'cat projects/www.chasefarrant.com/readme.txt', 'v86');
     // Wait for the final help entry before continuing.
     await command(page, 'clear; help', 'Command options');
     await waitPrompt(page);
@@ -219,14 +224,33 @@ async function expectTerminalTab(page, label, target) {
     assert.equal(await page.locator('#guest-link').getAttribute('href'), 'https://github.com/farrantch');
     assert.equal(await page.locator('#guest-link').getAttribute('rel'), 'noopener noreferrer');
     await page.locator('#dismiss-link').click();
-    await command(page, 'open ~/documents/ChaseFarrant-Resume.pdf', 'Open in browser: /ChaseFarrant-Resume.pdf');
-    assert.equal(await page.locator('#guest-link').textContent(), 'Download PDF ↓');
-    assert.equal(await page.locator('#guest-link').getAttribute('download'), 'ChaseFarrant-Resume.pdf');
+    await page.context().route('https://github.com/farrantch/**', route => route.fulfill({ contentType: 'text/html', body: '<title>Project repository</title>' }));
+    for (const project of portfolio.projects.filter(project => project.repository)) {
+      await command(page, `clear; open ~/projects/${project.slug}/github.url`, project.repository);
+      await page.waitForFunction(href => document.querySelector('#guest-link').href === href, project.repository);
+      await expectTerminalTab(page, project.repository, project.repository);
+      await page.locator('#dismiss-link').click();
+    }
+    await page.context().route(resumeURL, route => route.fulfill({
+      contentType: 'application/pdf', body: expectedPDF,
+      headers: { 'Content-Disposition': 'attachment; filename="ChaseFarrant-Resume.pdf"' }
+    }));
+    await command(page, 'open ~/documents/ChaseFarrant-Resume.pdf', `Open in browser: ${resumeURL}`);
+    assert.equal(await page.locator('#guest-link').getAttribute('href'), resumeURL);
+    const sameOriginPDF = new URL(resumeURL).origin === new URL(url).origin;
+    assert.equal(await page.locator('#guest-link').textContent(), sameOriginPDF ? 'Download PDF ↓' : 'Open link ↗');
+    assert.equal(await page.locator('#guest-link').getAttribute('download'), sameOriginPDF ? 'ChaseFarrant-Resume.pdf' : null);
+    const pagesBeforePDF = new Set(page.context().pages());
     const downloadPromise = page.waitForEvent('download');
     await page.locator('#guest-link').click();
     const download = await downloadPromise;
     assert.equal(download.suggestedFilename(), 'ChaseFarrant-Resume.pdf');
-    assert.deepEqual(readFileSync(await download.path()), readFileSync(path.join(__dirname, '../site/ChaseFarrant-Resume.pdf')));
+    assert.deepEqual(readFileSync(await download.path()), expectedPDF);
+    // The mocked cross-origin attachment can leave an empty download tab.
+    for (const tab of page.context().pages()) {
+      if (!pagesBeforePDF.has(tab)) await tab.close();
+    }
+    await page.bringToFront();
     await command(page, 'open contact/github.url');
     await page.waitForFunction(() => document.querySelector('#guest-link').textContent === 'Open link ↗');
     assert.equal(await page.locator('#guest-link').getAttribute('download'), null);
@@ -297,7 +321,7 @@ async function expectTerminalTab(page, label, target) {
     await page.keyboard.press('Control+x');
     await waitPrompt(page);
     await command(page, 'clear; cat /tmp/nano.txt', 'NANO_SAVED');
-    await command(page, 'clear; less projects/website/article.txt', 'Explore the portfolio in Linux');
+    await command(page, 'clear; less projects/www.chasefarrant.com/article.txt', 'Explore the portfolio in Linux');
     await page.keyboard.press('Space');
     await page.keyboard.press('q');
     await waitPrompt(page);
@@ -373,6 +397,7 @@ async function expectTerminalTab(page, label, target) {
     await mobile.screenshot({ path: '/tmp/chase-vm-help-mobile.png' });
     await command(mobile, 'pwd', '/home/guest');
     await command(mobile, 'echo MOBILE_WORKS', 'MOBILE_WORKS');
+    await require('./touch-scroll.browser.cjs')(mobile);
     await mobile.setViewportSize({ width: 320, height: 640 });
     assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
     assert.equal(await mobile.locator('.topbar').evaluate(element => element.getBoundingClientRect().height), 54);
@@ -406,7 +431,7 @@ async function expectTerminalTab(page, label, target) {
     const fallback = await browser.newPage({ javaScriptEnabled: false });
     await fallback.goto(url);
     assert(await fallback.locator('#portfolio').isVisible());
-    assert.equal(await fallback.locator('#projects .project').count(), 8);
+    assert.equal(await fallback.locator('#projects .project').count(), expectedProjectCount);
     assert(await fallback.locator('a[href="mailto:hello@chasefarrant.com"]').isVisible());
     await fallback.close();
 
