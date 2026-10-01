@@ -6,30 +6,18 @@ case "$cols" in ''|*[!0-9]*) cols=80 ;; esac
 width=$((cols - 4))
 [ "$width" -le 76 ] || width=76
 printf '\033[2J\033[H\n\033[32m'
-if [ "$cols" -ge 54 ]; then
-  cat <<'CF'
+cat <<'CF'
                           __________
                          /:::: ____/|
-      ___________       /:::: /___|/      ____
-     /::::::::::/|  __/:::: /_______      \:::\
-    /:::: _____/ /  \::::::::::::::/|      \:::\
-   /:::: /     \/    \___:::: _____|/       \:::\
-   |::::|______         /:::: /|            /:::/|
-   \::::::::::/|       /:::: / /           /:::/ /
-    \________/ /      /_____/ /           /___/ /
-     \_______\/       \_____\/            \___\/
+      ___________       /:::: /___|/    ____
+     /::::::::::/|  ___/:::: /_______   \:::\
+    /:::: _____/ / /:::::::::::::::/|    \:::\
+   /:::: /     \/  \_/:::: ________|/     \:::\
+   |::::|______     /:::: /|              /:::/|
+   \::::::::::/|   /:::: / /             /:::/ /
+    \________/ /  /_____/ /             /___/ /
+     \_______\/   \_____\/              \___\/
 CF
-else
-  cat <<'CF'
-              ____
-             /:: _|
-    _____   |:: |_       ___
-   /:: __|  |::  _|      \::\
-  |:: (__   |:: |         >::>
-   \_____|  |___|        /__/
-    `----'   `--'        `--'
-CF
-fi
 printf '\033[0m\n\033]777;art\007'
 cat <<'INTRO' | fold -s -w "$width" | sed 's/^/  /'
 Heyo, I'm Chase. I work in automation, cloud infrastructure, backend software development, and apparently vibecoding now. This is a collection of my work and side projects, from code and electronics to home renovation and tinkering around the farm.

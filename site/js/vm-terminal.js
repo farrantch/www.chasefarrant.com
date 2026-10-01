@@ -75,7 +75,14 @@ addEventListener('hashchange', followHash);
 document.addEventListener('visibilitychange', syncActivity);
 function fitTerminal() {
   if (!session?.term || terminalView.hidden) return;
-  session.fit.fit();
+  const { term, fit } = session;
+  const preferredFontSize = matchMedia('(max-width: 650px)').matches ? 14 : 16;
+  term.options.fontSize = preferredFontSize;
+  // Keep the 48-column welcome drawing intact, with room to spare on phones.
+  while (fit.proposeDimensions()?.cols < 50 && term.options.fontSize > 8) {
+    term.options.fontSize -= 1;
+  }
+  fit.fit();
   if (session.ready) {
     const dimensions = `${session.term.rows} ${session.term.cols}\n`;
     session.vm.serial_send_bytes(1, new TextEncoder().encode(dimensions));
