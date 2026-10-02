@@ -116,6 +116,8 @@ async function expectTerminalTab(page, label, target) {
   try {
     await require('./startup.browser.cjs')(browser, url, { width: 1280, height: 900 });
     console.log('Startup checks passed: first paint, reload, section links, blocked modules, and no-JS browsing.');
+    await require('./resources.browser.cjs')(browser, url);
+    console.log('Resource checks passed: paused boot, idle CPU, typing/tap wakeup, preserved files, visibility, and busy-loop interruption.');
     const errors = [];
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     page.on('pageerror', error => errors.push(error.message));
@@ -420,7 +422,12 @@ async function expectTerminalTab(page, label, target) {
     assert(!directRequests.some(request => /\.(wasm|bin)$/.test(request)));
     await directBrowse.locator('[data-view="terminal"]').click();
     await directBrowse.locator('[data-view="browse"]').click();
+    await directBrowse.locator('.xterm-rows').waitFor({ state: 'attached', timeout: 95000 });
+    await directBrowse.waitForTimeout(1800);
+    assert.equal(await directBrowse.locator('#boot-screen').getAttribute('data-state'), 'loading');
+    await directBrowse.locator('[data-view="terminal"]').click();
     await directBrowse.waitForFunction(() => document.querySelector('#boot-screen').dataset.state === 'art', null, { timeout: 95000 });
+    await directBrowse.locator('[data-view="browse"]').click();
     await directBrowse.waitForTimeout(1800);
     assert.equal(await directBrowse.locator('#boot-screen').getAttribute('data-state'), 'art');
     assert.doesNotMatch(await directBrowse.locator('.xterm-rows').textContent(), /guest@chasefarrant\.com:~\$/);

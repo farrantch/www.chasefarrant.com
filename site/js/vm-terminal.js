@@ -2,6 +2,7 @@ import { safeLink, bridgeMessage } from './vm-bridge.mjs';
 import { createLoginBuffer } from './login-buffer.mjs';
 import { attachTouchScroll } from './touch-scroll.mjs';
 import { createBootSequence, createShutdownSequence, advanceBoot } from './boot-sequence.mjs';
+import { createVmActivity } from './vm-activity.mjs';
 
 const $ = selector => document.querySelector(selector);
 const config = JSON.parse($('#vm-config').textContent);
@@ -17,8 +18,22 @@ let generation = 0;
 
 function setStatus(text) { status.textContent = text; }
 function syncActivity() {
+  if (!session || session.stopping || session.failed) return;
+  const visible = !document.hidden && view === 'terminal';
+  // Only time out boot while the visitor can see it. A paused boot may spend
+  // any amount of time in Browse or a background tab.
+  if (session.timeout) {
+    clearTimeout(session.timeout);
+    session.bootRemaining -= performance.now() - session.timeoutStarted;
+    session.timeout = null;
+  }
+  if (session.expireBoot && !session.artReady && visible) {
+    session.timeoutStarted = performance.now();
+    session.timeout = setTimeout(session.expireBoot, Math.max(0, session.bootRemaining));
+  }
+  session.activity?.setVisible(visible);
   if (session?.loginStage && !session.ready && !session.stopping) {
-    if (!document.hidden && view === 'terminal') startLoginDelay(session);
+    if (visible) startLoginDelay(session);
     else {
       clearTimeout(session.loginTimer);
       session.loginTimer = null;
@@ -26,14 +41,7 @@ function syncActivity() {
     return;
   }
   if (!session?.ready) return;
-  if (document.hidden || view === 'browse') {
-    session.vm.stop();
-    setStatus('Session paused.');
-  } else {
-    session.vm.run();
-    setStatus('guest · connected');
-    fitTerminal();
-  }
+  if (visible) fitTerminal();
 }
 function setView(next) {
   view = next;
@@ -64,6 +72,7 @@ document.querySelectorAll('[data-view]').forEach(element => {
   if (element.dataset.view === 'terminal') element.addEventListener('click', () => {
     history.replaceState(null, '', '#terminal');
     setView('terminal');
+    session?.activity?.wake();
   });
 });
 // Reveal browse targets before native fragment navigation, including the skip link.
@@ -85,7 +94,10 @@ function fitTerminal() {
   fit.fit();
   if (session.ready) {
     const dimensions = `${session.term.rows} ${session.term.cols}\n`;
-    session.vm.serial_send_bytes(1, new TextEncoder().encode(dimensions));
+    if (dimensions !== session.dimensions) {
+      session.dimensions = dimensions;
+      session.vm.serial_send_bytes(1, new TextEncoder().encode(dimensions));
+    }
   }
 }
 $('#dismiss-link').addEventListener('click', () => {
@@ -126,6 +138,7 @@ async function dispose() {
   clearInterval(old.bootTimer);
   old.abort.abort();
   old.observer?.disconnect();
+  await old.activity?.dispose();
   old.term?.dispose();
   if (old.vm) await old.vm.destroy();
 }
@@ -163,6 +176,7 @@ function startLoginDelay(current) {
       }
       current.term.options.disableStdin = false;
       current.ready = true;
+      current.activity.setReady();
       current.loginStage = 'ready';
       bootScreen.dataset.state = 'ready';
       terminalView.setAttribute('aria-busy', 'false');
@@ -224,7 +238,7 @@ async function reboot(current) {
   $('.topbar').classList.remove('has-guest-link');
   current.bootTimer = setInterval(() => renderBoot(current), 80);
   renderBoot(current);
-  await current.vm.stop();
+  await current.activity.dispose();
   if (session === current) bootStep(current, 0, 'done');
 }
 
@@ -233,6 +247,8 @@ async function start() {
   starting = true;
   const run = ++generation;
   setStatus('Starting…');
+  $('[data-view="terminal"]').textContent = 'Terminal';
+  $('[data-view="terminal"]').title = '';
   bootScreen.hidden = false;
   bootScreen.dataset.state = 'loading';
   $('#boot-log').textContent = '[ .. ] Starting…';
@@ -274,7 +290,9 @@ async function start() {
     console.error('Portfolio VM:', error);
     await dispose();
   }
-  current.timeout = setTimeout(() => fail(new Error('Guest boot timed out')), config.bootTimeoutMs);
+  current.bootRemaining = config.bootTimeoutMs;
+  current.expireBoot = () => fail(new Error('Guest boot timed out'));
+  syncActivity();
   try {
     if (typeof WebAssembly === 'undefined') throw new Error('WebAssembly is unavailable');
     const load = async name => {
@@ -352,6 +370,7 @@ async function start() {
       if (message.type === 'art' && !current.artReady) {
         current.artReady = true;
         clearTimeout(current.timeout);
+        current.timeout = null;
         bootStep(current, 4, 'done');
       } else if (message.type === 'ready' && current.loginStage === 'printing') {
         current.loginStage = 'welcome';
@@ -368,8 +387,20 @@ async function start() {
       }
       return true;
     });
-    term.onData(data => { if (current.ready) current.vm.serial_send_bytes(0, new TextEncoder().encode(data)); });
-    term.onBinary(data => { if (current.ready) current.vm.serial_send_bytes(0, Uint8Array.from(data, char => char.charCodeAt(0))); });
+    // xterm also emits onData for guest device queries. Only visitor events
+    // extend the idle deadline; a program cannot keep itself awake with output.
+    const sendInput = bytes => {
+      if (current.ready && !current.stopping && !document.hidden && view === 'terminal') {
+        current.vm.serial_send_bytes(0, bytes);
+      }
+    };
+    term.onData(data => sendInput(new TextEncoder().encode(data)));
+    term.onBinary(data => sendInput(Uint8Array.from(data, char => char.charCodeAt(0))));
+    for (const event of ['pointerdown', 'keydown', 'input', 'paste', 'compositionend', 'wheel']) {
+      $('#terminal-screen').addEventListener(event, () => current.activity?.wake(), {
+        capture: true, passive: true, signal: current.abort.signal
+      });
+    }
     fitTerminal();
     current.observer = new ResizeObserver(() => fitTerminal());
     current.observer.observe($('#terminal-screen'));
@@ -381,9 +412,22 @@ async function start() {
       bios: { buffer: bios }, vga_bios: { buffer: vga }, bzimage: { buffer: kernel }, initrd: { buffer: initrd },
       memory_size: config.memoryMiB * 1024 * 1024,
       cmdline: `console=ttyS0 quiet tsc=reliable mitigations=off random.trust_cpu=on portfolio.size=${term.rows}x${term.cols}`,
-      uart1: true, autostart: true, disable_keyboard: true, disable_mouse: true, disable_speaker: true
+      uart1: true, autostart: false, disable_keyboard: true, disable_mouse: true, disable_speaker: true
       // Deliberately no network backend, host filesystem, or remote execution.
     });
+    current.activity = createVmActivity({
+      vm, onError: fail,
+      onChange: ({ ready, visible, idle, paused }) => {
+        if (session !== current || !ready || current.stopping || current.failed) return;
+        setStatus(!visible ? 'Session paused.' : idle ? 'Session paused · type or tap to resume.' : 'guest · connected');
+        const button = $('[data-view="terminal"]');
+        button.textContent = idle && visible ? 'Resume' : 'Terminal';
+        button.title = idle && visible ? 'Session paused to save power. Type or tap to resume.' : '';
+        term.options.cursorBlink = !paused && !reducedMotion.matches;
+      }
+    });
+    current.activity.setVisible(!document.hidden && view === 'terminal');
+    vm.add_listener('emulator-ready', () => current.activity.initialize());
     vm.add_listener('download-error', error => fail(error));
     // Bound terminal rendering when programs produce output faster than the UI.
     const flush = () => {
@@ -393,7 +437,10 @@ async function start() {
       term.write(bytes, () => {
         if (session !== current || current.rebootRequested) return;
         current.flushing = false;
-        if (current.backpressure && current.pending.length < 32768) { current.backpressure = false; if (!document.hidden && view === 'terminal') vm.run(); }
+        if (current.backpressure && current.pending.length < 32768) {
+          current.backpressure = false;
+          current.activity.setBackpressure(false);
+        }
         if (current.pending.length) current.flushTimer = setTimeout(flush, 0);
       });
     };
@@ -407,7 +454,10 @@ async function start() {
       if (!current.loginBuffer.accept(byte)) return;
       current.pending.push(byte);
       if (current.pending.length === 1) current.flushTimer = setTimeout(flush, 0);
-      if (current.pending.length > 131072 && !current.backpressure) { current.backpressure = true; vm.stop(); }
+      if (current.pending.length > 131072 && !current.backpressure) {
+        current.backpressure = true;
+        current.activity.setBackpressure(true);
+      }
     });
   } catch (error) { await fail(error); }
 }

@@ -43,7 +43,7 @@ function buildVM(output = path.join(root, 'site/_site')) {
     emulator = emulator.replace(before, after);
   }
   payload.set('libv86.mjs', Buffer.from(emulator));
-  for (const name of ['initial-view.js', 'vm-terminal.js', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs', 'touch-scroll.mjs']) {
+  for (const name of ['initial-view.js', 'vm-terminal.js', 'vm-activity.mjs', 'boot-sequence.mjs', 'login-buffer.mjs', 'vm-bridge.mjs', 'touch-scroll.mjs']) {
     payload.set(name, fs.readFileSync(path.join(root, 'site/js', name)));
   }
   payload.set('terminal.css', fs.readFileSync(path.join(root, 'site/css/terminal.css')));

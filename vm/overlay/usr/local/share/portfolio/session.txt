@@ -7,6 +7,9 @@ Storage
   Writable  Home directory and /tmp
   Lifetime  RAM only; reload, close, or reboot discards changes
   Browse    Pauses the VM; Terminal resumes it
+  Idle      Pauses after 30 seconds without input, or when the tab is hidden
+  Resume    Type, tap the terminal, or choose Resume; files stay in RAM
+  Jobs      Commands and games also stop while the session is paused
 
 Networking
   Guest     No network access; curl, wget, and ping are offline

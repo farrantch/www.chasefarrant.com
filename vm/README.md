@@ -171,9 +171,19 @@ bracketed paste when the guest application enables it. Clipboard access comes
 from browser gestures; guest escape sequences cannot read or replace it.
 
 Files live in guest RAM. Reloading, closing the page, restarting, or returning
-later in the same browser starts from the image again. Switching to Browse just
-pauses the current VM and keeps its files. There is no filesystem or VM snapshot
-in IndexedDB.
+later in the same browser starts from the image again. Switching to Browse or
+hiding the tab pauses emulation, including during boot, and keeps its files.
+A visible terminal also pauses after 30 seconds without terminal interaction
+(typing, pasting, tapping, or scrolling). Its cursor stops blinking and the
+Terminal button changes to Resume. Type, tap the terminal, or select Resume to continue the same
+session; the first keystroke is sent to the guest normally. Returning from Browse
+or a hidden tab also resumes it.
+
+The inactivity deadline counts visitor input, not guest output. Unattended
+commands, background jobs, and games pause too, including programs that produce
+continuous output. Pausing retains guest RAM and files; it reduces CPU use but
+does not release the VM's memory. The 30-second setting lives in
+`site/js/vm-activity.mjs`. There is no filesystem or VM snapshot in IndexedDB.
 
 ## Portfolio files
 
@@ -357,7 +367,7 @@ Useful upstream references:
 | Guest directory layout | `site/_lib/portfolio.cjs` |
 | Article formatting for the terminal | `site/_lib/terminal-text.cjs` |
 | Browser bridge and URL validation | `site/js/vm-bridge.mjs` |
-| Terminal rendering, lifecycle, and memory setting | `site/js/vm-terminal.js`, `scripts/build-vm.cjs` |
+| Terminal rendering, lifecycle, and memory setting | `site/js/vm-terminal.js`, `site/js/vm-activity.mjs`, `scripts/build-vm.cjs` |
 | Boot screen, navbar, and Browse view | `site/index.njk`, `site/css/terminal.css` |
 
 The generated portfolio and Browse view share the same content model. Published
@@ -424,8 +434,9 @@ Risks still exist:
   Replace it with a maintained build before enabling broader capabilities.
 - Busy loops or excessive output can consume CPU and memory in the visitor's
   tab. Guest RAM and terminal scrollback are bounded; output has backpressure,
-  and the VM pauses in Browse or while the document is hidden. This is not a
-  strict CPU quota. A visitor can close the tab or restart the session.
+  and the VM pauses in Browse, while the document is hidden (including boot),
+  or after 30 seconds without terminal input. This is not a strict CPU quota
+  during active use. A visitor can close the tab or restart the session.
 - Offering a web/mail link still allows an intentional visitor action to contact
   another site. Validation does not make the destination trustworthy.
 - Enabling guest networking would change the threat model. A relay must enforce
