@@ -12,6 +12,8 @@ const expectedPDF = fs.readFileSync(path.resolve(__dirname, '../site/ChaseFarran
     try {
       await require('./startup.browser.cjs')(browser, url, viewport);
       console.log(`${name}: first paint, reload, section links, blocked modules, and no-JS passed.`);
+      await require('./resources.browser.cjs')(browser, url);
+      console.log(`${name}: idle pause and resume checks passed.`);
       const page = await browser.newPage({ viewport, acceptDownloads: true, ...(engine !== firefox ? { isMobile: true, hasTouch: true } : {}) });
       const errors = [];
       page.on('pageerror', error => errors.push(error.message));

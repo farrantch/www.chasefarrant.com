@@ -87,7 +87,9 @@ Visitors arrive in `/home/guest`, with directories for `projects`,
 `about`, `career`, `contact`, `notes`, and `documents`. Each career directory contains `role.txt`, `work.txt`, and `tools.txt`;
 project and note summaries point to full articles and browser links. `help`,
 `help keys`, and `help session` cover terminal use. Sessions are
-writable and temporary; restarting restores the image. Guest networking is
+writable and temporary; restarting restores the image. The VM pauses after 30
+seconds without terminal input, in Browse, and in hidden tabs. Typing, tapping
+the terminal, or choosing Resume continues the same session. Guest networking is
 currently disconnected. The full portfolio is also available without JavaScript.
 
 ```sh
